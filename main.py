@@ -203,7 +203,11 @@ def inject_globals():
 def home():
     posts = get_all_posts()
     last_post = posts[0] if posts else None
-    return render_template("index.html", post=last_post)
+
+    # 👇 NUEVO: fecha formateada para "Hoy es {{ fecha }}"
+    fecha = datetime.now().strftime("%d/%m/%Y")
+
+    return render_template("index.html", post=last_post, fecha=fecha)
 
 
 @app.route("/about")
