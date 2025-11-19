@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post["title"] }} · Desde Cero{% endblock %}
+
+{% block content %}
+<section class="page">
+  <a href="{{ url_for('blog_list') }}" class="back-link">← Volver al blog</a>
+
+  <article class="card post-detail">
+    <header>
+      <h1>{{ post["title"] }}</h1>
+      <p class="post-meta">
+        {{ post["date"] }} · {{ post["tags"] }}
+      </p>
+    </header>
+
+    <div class="post-body">
+      {{ post["content"] | safe }}
+    </div>
+  </article>
+
+  <section class="comments-section">
+    <h2>Comentarios</h2>
+
+    {% if comments %}
+      <ul class="comments-list">
+        {% for c in comments %}
+          <li class="comment-item">
+            <div class="comment-header">
+              <strong>{{ c["name"] }}</strong>
+              <span class="comment-date">{{ c["created_at"] }}</span>
+            </div>
+            <p class="comment-text">{{ c["text"] }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-comments">Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+    {% endif %}
+
+    <div class="comment-form card">
+      <h3>Deja tu comentario</h3>
+      <form method="post">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="text">Tu comentario</label>
+          <textarea id="text" name="text" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Publicar comentario</button>
+      </form>
+    </div>
+  </section>
+</section>
+{% endblock %}

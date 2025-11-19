@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Blog | Desde Cero{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="section-header">
+        <h1 class="section-title">Publicaciones recientes</h1>
+        <p class="section-subtitle">
+            Artículos pensados para ayudarte a avanzar desde cero, sin abrumarte.
+        </p>
+    </div>
+
+    {% if posts %}
+        <div class="post-list">
+            {% for post in posts %}
+                <a href="{{ url_for('post_detail', slug=post['slug']) }}" class="post-card">
+                    <h2 class="post-card-title">{{ post['title'] }}</h2>
+                    <div class="post-card-meta">
+                        {{ post['date']|fecha }}
+                        {% if post['tags'] %} · {{ post['tags'] }}{% endif %}
+                    </div>
+                    <p class="post-card-excerpt">{{ post['excerpt'] }}</p>
+                    <div class="post-card-footer">
+                        <span>Leer más</span>
+                        <span class="link-muted">/post/{{ post['slug'] }}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No hay publicaciones todavía. Muy pronto empezaré a subir contenido 🙂.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

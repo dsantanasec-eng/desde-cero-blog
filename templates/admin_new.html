@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Nuevo post · Admin · {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+  <section class="hero" style="padding-bottom:0">
+    <h1>Nuevo post</h1>
+    <p class="muted">Publica un artículo sin tocar el código.</p>
+  </section>
+
+  {% with msgs = get_flashed_messages() %}
+    {% if msgs %}
+      <div class="card" style="border-color:#cfe3ff;background:#f6faff">
+        {% for m in msgs %}<div>{{ m }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" class="card" style="margin-top:16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <label class="muted">Título</label>
+        <input name="title" required style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px">
+      </div>
+      <div>
+        <label class="muted">Slug (enlace)</label>
+        <input name="slug" placeholder="mi-articulo" required style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px">
+      </div>
+      <div>
+        <label class="muted">Fecha</label>
+        <input name="date" type="date" value="{{ hoy }}" required style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px">
+      </div>
+      <div>
+        <label class="muted">Tags (coma separados)</label>
+        <input name="tags" placeholder="python, finanzas" style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px">
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label class="muted">Resumen (excerpt)</label>
+      <textarea name="excerpt" rows="2" style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px"></textarea>
+    </div>
+
+    <div style="margin-top:12px">
+      <label class="muted">Contenido (HTML permitido)</label>
+      <textarea name="content" rows="10" placeholder="<p>Tu contenido aquí...</p>" style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px"></textarea>
+    </div>
+
+    <button class="btn" style="margin-top:14px">Publicar</button>
+    <a class="btn" style="margin-top:14px;margin-left:8px" href="/admin/logout">Cerrar sesión</a>
+  </form>
+{% endblock %}

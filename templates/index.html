@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Desde Cero{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-kicker">Bienvenido</div>
+    <h1 class="hero-title">Empieza desde cero y construye algo real en internet</h1>
+    <p class="hero-subtitle">
+        Aquí comparto lo que voy aprendiendo sobre programación, proyectos reales y formas honestas
+        de generar ingresos online, paso a paso, sin teoría innecesaria.
+    </p>
+
+    <div class="hero-meta">
+        <div class="pill">
+            <span class="pill-dot"></span>
+            <span>Proyecto personal en desarrollo</span>
+        </div>
+        <span>Hoy es {{ fecha }}</span>
+    </div>
+
+    <div class="hero-actions">
+        <a href="{{ url_for('blog_list') }}" class="btn-primary">
+            Explorar artículos
+            <span>→</span>
+        </a>
+        <a href="{{ url_for('about') }}" class="btn-ghost">
+            Conoce mi historia
+        </a>
+    </div>
+</section>
+
+{% if post %}
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">Último artículo publicado</h2>
+        <p class="section-subtitle">Lo más reciente que he escrito.</p>
+    </div>
+
+    <a href="{{ url_for('post_detail', slug=post['slug']) }}" class="post-card">
+        <h3 class="post-card-title">{{ post['title'] }}</h3>
+        <div class="post-card-meta">
+            {{ post['date']|fecha }}
+            {% if post['tags'] %} · {{ post['tags'] }}{% endif %}
+        </div>
+        <p class="post-card-excerpt">{{ post['excerpt'] }}</p>
+        <div class="post-card-footer">
+            <span>Leer más</span>
+            <span class="link-muted">{{ url_for('post_detail', slug=post['slug']) }}</span>
+        </div>
+    </a>
+</section>
+{% endif %}
+
+{% endblock %}
