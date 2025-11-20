@@ -10,6 +10,7 @@ from flask import (
     redirect,
     url_for,
     abort,
+    send_from_directory,   # 👈 NUEVO
 )
 
 # ---------------- Configuración básica ----------------
@@ -204,7 +205,7 @@ def home():
     posts = get_all_posts()
     last_post = posts[0] if posts else None
 
-    # 👇 NUEVO: fecha formateada para "Hoy es {{ fecha }}"
+    # fecha para "Hoy es {{ fecha }}"
     fecha = datetime.now().strftime("%d/%m/%Y")
 
     return render_template("index.html", post=last_post, fecha=fecha)
@@ -237,6 +238,20 @@ def post_detail(slug):
 
     comments = get_comments(post["id"])
     return render_template("post_detail.html", post=post, comments=comments)
+
+
+# ----------- NUEVO: ruta para sitemap.xml ----------------
+
+@app.route("/sitemap.xml")
+def sitemap():
+    """
+    Sirve el archivo sitemap.xml que está en la misma carpeta que main.py
+    """
+    return send_from_directory(
+        BASE_DIR,
+        "sitemap.xml",
+        mimetype="application/xml"
+    )
 
 
 # ----------------- Arranque / CLI -----------------------
