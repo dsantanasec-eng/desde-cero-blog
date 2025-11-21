@@ -2,6 +2,7 @@ import argparse
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+import os  # 👈 NUEVO
 
 from flask import (
     Flask,
@@ -10,7 +11,7 @@ from flask import (
     redirect,
     url_for,
     abort,
-    send_from_directory,   # 👈 NUEVO
+    send_file,  # 👈 NUEVO
 )
 
 # ---------------- Configuración básica ----------------
@@ -240,18 +241,15 @@ def post_detail(slug):
     return render_template("post_detail.html", post=post, comments=comments)
 
 
-# ----------- NUEVO: ruta para sitemap.xml ----------------
+# ----------- Ruta para sitemap.xml ----------------
 
 @app.route("/sitemap.xml")
 def sitemap():
     """
     Sirve el archivo sitemap.xml que está en la misma carpeta que main.py
     """
-    return send_from_directory(
-        BASE_DIR,
-        "sitemap.xml",
-        mimetype="application/xml"
-    )
+    sitemap_path = os.path.join(BASE_DIR, "sitemap.xml")
+    return send_file(sitemap_path, mimetype="application/xml")
 
 
 # ----------------- Arranque / CLI -----------------------
@@ -273,5 +271,5 @@ def main():
         app.run(debug=True, host="127.0.0.1", port=5000)
 
 
-if __name__ == "__main__":
+if __name__ == "_main_":
     main()
