@@ -10,109 +10,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --bg-body: #0f172a;
-            --bg-card: #111827;
-            --primary: #8b5cf6;
-            --text-main: #e5e7eb;
-            --text-muted: #9ca3af;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            font-family: "Poppins", sans-serif;
-            background: #0f172a;
-            color: var(--text-main);
-        }
-
-        /* NAVBAR ORIGINAL */
-        .navbar {
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-            padding: 0.75rem 1.25rem;
-        }
-
-        .navbar-inner {
-            max-width: 960px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            gap: 0.75rem;
-        }
-
-        .brand-logo-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-        }
-
-        .brand-text-main {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #fff;
-        }
-
-        .brand-text-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .nav-links a.nav-active {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .page {
-            max-width: 960px;
-            margin: 2rem auto;
-            padding: 0 1.25rem;
-        }
-
-        .footer {
-            margin-top: 2rem;
-            background: #111827;
-            border-top: 1px solid #1f2937;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .footer-inner {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 0.9rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 <header class="navbar">
     <div class="navbar-inner">
         <a href="{{ url_for('home') }}" class="brand">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo-img">
+
+            <!-- ✅ LOGO NUEVO -->
+            <img src="{{ url_for('static', filename='desdecero.png') }}" 
+                 alt="Logo Desde Cero"
+                 style="width:32px; height:32px; border-radius:6px;">
+
             <div>
                 <div class="brand-text-main">Desde Cero</div>
                 <div class="brand-text-sub">Aprende, aplica y gana experiencia</div>
