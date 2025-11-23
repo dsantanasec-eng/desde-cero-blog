@@ -6,56 +6,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Fuente Google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- ✅ IMPORTANTE: Cargar estilos -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- ESTILOS ORIGINALES -->
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            color: white;
+        }
+
+        .navbar {
+            background: rgba(0,0,0,0.35);
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .brand-sub {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5e1;
+            margin-left: 15px;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover,
+        .nav-active {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 2.5rem auto;
+            padding: 0 1rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.25);
+            text-align: center;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+        }
+    </style>
+
 </head>
 <body>
 
 <header class="navbar">
-    <div class="navbar-inner">
+    <a href="{{ url_for('home') }}" class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <div>
+            <div class="brand-title">Desde Cero</div>
+            <div class="brand-sub">Aprende, aplica y gana experiencia</div>
+        </div>
+    </a>
 
-        <!-- ✅ LOGO NUEVO -->
-        <a href="{{ url_for('home') }}" class="brand">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo-img">
-            <div>
-                <div class="brand-text-main">Desde Cero</div>
-                <div class="brand-text-sub">Aprende, aplica y gana experiencia</div>
-            </div>
-        </a>
-
-        <nav class="nav-links">
-            <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
-            <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
-            <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
-        </nav>
-
-    </div>
+    <nav class="nav-links">
+        <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
+        <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
+        <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
+    </nav>
 </header>
 
 <main class="page">
     {% block content %}{% endblock %}
 </main>
 
-<footer class="footer">
-    <div class="footer-inner">
-        <div>©️ 2025 Desde Cero. Hecho por Diomedes Santana.</div>
-        <div>Construido con Flask. Más contenido muy pronto.</div>
-    </div>
+<footer>
+    © 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
 </footer>
-
-<!-- ✅ Estilos básicos (solo para el logo) -->
-<style>
-    .brand-logo-img {
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        object-fit: cover;
-    }
-</style>
 
 </body>
 </html>
