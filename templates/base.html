@@ -10,21 +10,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Estilos -->
+    <!-- ✅ IMPORTANTE: Cargar estilos -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
 
 <header class="navbar">
     <div class="navbar-inner">
+
+        <!-- ✅ LOGO NUEVO -->
         <a href="{{ url_for('home') }}" class="brand">
-
-            <!-- ✅ LOGO NUEVO -->
-            <img src="{{ url_for('static', filename='desdecero.png') }}" 
-                 alt="Logo Desde Cero"
-                 style="width:32px; height:32px; border-radius:6px;">
-
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo-img">
             <div>
                 <div class="brand-text-main">Desde Cero</div>
                 <div class="brand-text-sub">Aprende, aplica y gana experiencia</div>
@@ -36,6 +32,7 @@
             <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
             <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
         </nav>
+
     </div>
 </header>
 
@@ -49,6 +46,16 @@
         <div>Construido con Flask. Más contenido muy pronto.</div>
     </div>
 </footer>
+
+<!-- ✅ Estilos básicos (solo para el logo) -->
+<style>
+    .brand-logo-img {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        object-fit: cover;
+    }
+</style>
 
 </body>
 </html>
