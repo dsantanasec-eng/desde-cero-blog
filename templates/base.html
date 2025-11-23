@@ -14,91 +14,52 @@
         :root {
             --bg-body: #0f172a;
             --bg-card: #111827;
-            --bg-card-soft: #020617;
             --primary: #8b5cf6;
-            --primary-soft: #a855f7;
-            --primary-strong: #6366f1;
             --text-main: #e5e7eb;
             --text-muted: #9ca3af;
-            --border-soft: rgba(148, 163, 184, 0.25);
-            --danger: #f97373;
         }
 
         * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: radial-gradient(circle at top left, #1f2937 0, #020617 45%, #020617 100%);
+            font-family: "Poppins", sans-serif;
+            background: #0f172a;
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* ✅ Restaurar estilo original de los enlaces */
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        a:hover {
-            opacity: 0.85;
-        }
-
-        a:visited {
-            color: inherit;
-            text-decoration: none;
-        }
-
+        /* NAVBAR ORIGINAL */
         .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: linear-gradient(90deg, #020617 0%, #111827 40%, #4c1d95 100%);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.35);
-            backdrop-filter: blur(14px);
+            background: #111827;
+            border-bottom: 1px solid #1f2937;
+            padding: 0.75rem 1.25rem;
         }
 
         .navbar-inner {
             max-width: 960px;
             margin: 0 auto;
-            padding: 0.75rem 1.25rem;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 1rem;
+            align-items: center;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 0.55rem;
             text-decoration: none;
+            gap: 0.75rem;
         }
 
-        .brand-logo {
-            width: 30px;
-            height: 30px;
+        .brand-logo-img {
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .brand-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .brand-text-main {
             font-weight: 600;
             font-size: 1.05rem;
-            letter-spacing: 0.02em;
-            color: #f9fafb;
+            color: #fff;
         }
 
         .brand-text-sub {
@@ -109,41 +70,40 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
 
         .nav-links a.nav-active {
-            color: #f9fafb;
-            background: linear-gradient(135deg, var(--primary), var(--primary-soft));
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
+            color: #fff;
+            font-weight: 600;
         }
 
         .page {
-            flex: 1;
             max-width: 960px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 1.75rem 1.25rem 2.5rem;
+            margin: 2rem auto;
+            padding: 0 1.25rem;
         }
 
         .footer {
-            border-top: 1px solid rgba(31, 41, 55, 0.95);
-            background: #020617;
-            font-size: 0.8rem;
+            margin-top: 2rem;
+            background: #111827;
+            border-top: 1px solid #1f2937;
             color: var(--text-muted);
+            font-size: 0.8rem;
         }
 
         .footer-inner {
             max-width: 960px;
             margin: 0 auto;
-            padding: 0.9rem 1.25rem 1.2rem;
+            padding: 0.9rem 1.25rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
         }
     </style>
 </head>
@@ -152,9 +112,7 @@
 <header class="navbar">
     <div class="navbar-inner">
         <a href="{{ url_for('home') }}" class="brand">
-            <div class="brand-logo">
-                <img src="{{ url_for('static', filename='desdecero.png') }}" alt="Logo">
-            </div>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo-img">
             <div>
                 <div class="brand-text-main">Desde Cero</div>
                 <div class="brand-text-sub">Aprende, aplica y gana experiencia</div>
