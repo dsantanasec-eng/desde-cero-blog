@@ -242,14 +242,13 @@ def post_detail(slug):
 
 
 # ----------- Ruta para sitemap.xml ----------------
-
 @app.route("/sitemap.xml")
 def sitemap():
-    """
-    Sirve el archivo sitemap.xml que está en la misma carpeta que main.py
-    """
-    sitemap_path = os.path.join(BASE_DIR, "sitemap.xml")
-    return send_file(sitemap_path, mimetype="application/xml")
+    return send_file(
+        os.path.join(BASE_DIR, "sitemap.xml"),
+        mimetype="application/xml",
+        as_attachment=False
+    )
 
 
 # ----------------- Arranque / CLI -----------------------
