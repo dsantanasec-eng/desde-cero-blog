@@ -1,45 +1,211 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio - Desde Cero{% endblock %}
+{% block title %}Desde Cero | Aprende, aplica y gana experiencia{% endblock %}
 
 {% block content %}
+<style>
+  .home-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 5rem;
+  }
 
-<section class="hero">
-    <p class="hero-welcome">Bienvenido</p>
-    <h1 class="hero-title">Empieza desde cero y construye algo real en internet</h1>
+  .home-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      background: radial-gradient(circle at top left, #1d4ed8 0, #0f172a 45%, #020617 100%);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.75);
+  }
 
-    <p class="hero-text">
-        Aquí comparto lo que voy aprendiendo sobre programación, proyectos reales y formas honestas de generar
-        ingresos online, paso a paso, sin teoría innecesaria.
-    </p>
+  @media (min-width: 900px) {
+      .home-hero {
+          padding: 3.5rem 4rem;
+      }
+  }
 
-    <p class="hero-date">
-        Proyecto personal en desarrollo<br>
+  .home-kicker {
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+      margin-bottom: 0.75rem;
+  }
+
+  .home-title {
+      font-size: 2.4rem;
+      line-height: 1.1;
+      margin: 0 0 1rem;
+  }
+
+  @media (min-width: 900px) {
+      .home-title {
+          font-size: 3rem;
+      }
+  }
+
+  .home-subtitle {
+      color: #cbd5f5;
+      max-width: 34rem;
+      margin-bottom: 1.75rem;
+  }
+
+  .home-meta {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 1.25rem;
+  }
+
+  .home-meta strong {
+      color: #e5e7eb;
+  }
+
+  .home-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.8rem 1.6rem;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.15s ease-out;
+      background: transparent;
+      color: inherit;
+  }
+
+  .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      border-color: rgba(129, 140, 248, 0.6);
+  }
+
+  .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 35px rgba(79, 70, 229, 0.45);
+  }
+
+  .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.65);
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.55);
+  }
+
+  .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.9);
+  }
+
+  .home-mini {
+      font-size: 0.8rem;
+      color: #9ca3af;
+  }
+
+  .home-mini span {
+      color: #22c55e;
+      font-weight: 500;
+  }
+
+  .home-latest {
+      margin-top: 3rem;
+  }
+
+  .home-latest h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+  }
+
+  .home-latest p {
+      margin: 0 0 0.5rem;
+      color: #9ca3af;
+  }
+
+  .home-latest a.post-link {
+      color: #a855f7;
+      font-weight: 500;
+      text-decoration: none;
+  }
+
+  .home-latest a.post-link:hover {
+      text-decoration: underline;
+  }
+</style>
+
+<div class="home-wrapper">
+  <section class="home-hero">
+    <div>
+      <div class="home-kicker">BIENVENIDO</div>
+
+      <h1 class="home-title">
+        Empieza desde cero y construye algo real en internet
+      </h1>
+
+      <p class="home-subtitle">
+        Aquí comparto lo que voy aprendiendo sobre programación, proyectos reales
+        y formas honestas de generar ingresos online, paso a paso, sin teoría innecesaria.
+      </p>
+
+      <p class="home-meta">
+        <strong>Proyecto personal en desarrollo</strong><br>
         Hoy es {{ fecha }}
-    </p>
+      </p>
 
-    <div class="hero-buttons">
-        <a class="btn-primary" href="{{ url_for('blog_list') }}">Explorar artículos →</a>
-        <a class="btn-secondary" href="{{ url_for('about') }}">Conoce mi historia</a>
+      <div class="home-cta-row">
+        <a href="{{ url_for('blog_list') }}" class="btn-primary">
+          Explorar artículos →
+        </a>
+
+        <a href="{{ url_for('about') }}" class="btn-ghost">
+          Conoce mi historia
+        </a>
+      </div>
+
+      <p class="home-mini">
+        <span>✔</span>
+        Contenido orientado a personas que empiezan desde cero
+        y quieren resultados reales.
+      </p>
     </div>
-</section>
+  </section>
 
-<section class="latest-post">
+  <section class="home-latest">
     <h2>Último artículo publicado</h2>
     <p>Lo más reciente que he escrito.</p>
 
     {% if post %}
-        <h3>
-            <a href="{{ url_for('post_detail', slug=post['slug']) }}">
-                {{ post['title'] }}
-            </a>
-        </h3>
-        <p class="post-meta">{{ post['date']|fecha }} · {{ post['tags'] }}</p>
-        <p>{{ post['excerpt'] }}</p>
-        <a class="link-read" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
-    {% else %}
-        <p>No hay artículos todavía.</p>
-    {% endif %}
-</section>
+      <p>
+        <a href="{{ url_for('post_detail', slug=post['slug']) }}" class="post-link">
+          {{ post['title'] }}
+        </a>
+      </p>
 
+      <p class="home-mini">
+        {{ post['date']|fecha }} · {{ post['tags'] }}
+      </p>
+
+      <p>{{ post['excerpt'] }}</p>
+
+      <p>
+        <a href="{{ url_for('post_detail', slug=post['slug']) }}" class="post-link">
+          Leer más →
+        </a>
+      </p>
+    {% else %}
+      <p>
+        Todavía no hay artículos publicados. Muy pronto habrá contenido nuevo.
+      </p>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}
