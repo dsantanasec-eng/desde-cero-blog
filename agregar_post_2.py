@@ -6,69 +6,99 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "mi_blog.db"
 
+
 def main():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    # ----------------------------
-    # DATOS DEL NUEVO POST (ESTE ES NUEVO, NO EXISTE EN TU DB)
-    # ----------------------------
+    # ========= DATOS DEL NUEVO POST =========
+    title = "7 errores comunes al aprender Python desde cero (y cómo evitarlos)"
+    slug = "errores-comunes-aprender-python-desde-cero"  # 👈 SLUG NUEVO
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    tags = "python, principiantes, programación, errores comunes"
 
-    title = "Cómo obtener tu primer trabajo remoto en tecnología sin experiencia (Guía 2025)"
-    slug = "primer-trabajo-remoto-tecnologia"   # << NUEVO SLUG ÚNICO
-    date_str = datetime.now().strftime("%d/%m/%Y %H:%M")
-    tags = "tecnologia, remoto, primer empleo, carrera"
-    
     excerpt = (
-        "Una guía práctica para conseguir tu primer trabajo remoto en tecnología "
-        "aunque estés empezando desde cero."
+        "Un resumen claro de los errores más frecuentes cuando empiezas con Python "
+        "y cómo evitarlos para avanzar más rápido sin rendirte."
     )
 
     content_html = """
-    <h2>¿Quieres trabajar remoto sin experiencia? Sí se puede.</h2>
+<p>Aprender Python puede cambiar tu vida profesional, pero es normal cometer errores al inicio.
+La buena noticia es que casi todos cometen <strong>los mismos errores</strong>. Si los conoces antes,
+puedes avanzar más rápido y con menos frustración.</p>
 
-    <p>En 2025, la industria tecnológica ofrece miles de oportunidades para personas 
-    que están empezando desde cero. No necesitas un título universitario ni ser experto: 
-    necesitas estrategia, constancia y un buen portafolio.</p>
+<h2>1. Querer aprender “todo” antes de empezar</h2>
+<p>Muchos principiantes pasan horas buscando el curso perfecto, el libro perfecto o el canal perfecto.
+La verdad es que <strong>no existe el recurso perfecto</strong>. Lo importante es elegir uno bueno, terminarlo
+y practicar con proyectos pequeños.</p>
 
-    <h3>1. Aprende habilidades que están en demanda</h3>
-    <ul>
-        <li>Desarrollo web (HTML, CSS, JavaScript)</li>
-        <li>Python para automatización</li>
-        <li>Soporte técnico / IT Help Desk</li>
-        <li>Ciberseguridad inicial</li>
-    </ul>
+<p><em>Qué hacer:</em> elige un solo curso o libro básico de Python, márcalo como tu “ruta principal”
+y comprométete a terminarlo antes de saltar a otro.</p>
 
-    <h3>2. Construye un portafolio pequeño pero sólido</h3>
-    <p>Crea solo 3 a 5 proyectos. No más. Cada uno debe resolver un problema real.</p>
+<h2>2. Memorizar código en lugar de practicar</h2>
+<p>Copiar código sin entenderlo es uno de los errores más peligrosos.
+No necesitas memorizar todo; necesitas <strong>entender la lógica</strong> y practicar escribiendo código tú mismo.</p>
 
-    <h3>3. Optimiza tu perfil de LinkedIn</h3>
-    <p>LinkedIn es una máquina de oportunidades. Un perfil optimizado atrae reclutadores.</p>
+<p><em>Qué hacer:</em> después de ver una lección, intenta resolver un ejercicio sin mirar la solución.
+Si te bloqueas, revisa la teoría y vuelve a intentarlo.</p>
 
-    <h3>4. Aplica a trabajos remotos de nivel junior</h3>
-    <p>Recomendación: envía 15–20 aplicaciones por semana. La consistencia gana.</p>
+<h2>3. Saltar temas básicos como si no importaran</h2>
+<p>Variables, tipos de datos, condicionales, bucles y funciones son la base de todo.
+Si no dominas esto, cualquier tema más avanzado (APIs, web, automatización, etc.) te va a frustrar.</p>
 
-    <h3>Conclusión</h3>
-    <p>Tu primer trabajo remoto no requiere suerte. Requiere estrategia.</p>
-    <p>Si sigues esta guía, puedes conseguir tu oportunidad este mismo año.</p>
+<p><em>Qué hacer:</em> dedica tiempo a practicar ejercicios sencillos de cada tema.
+Es normal repetir muchos ejercicios hasta sentirte cómodo.</p>
+
+<h2>4. Querer usar demasiadas herramientas desde el día uno</h2>
+<p>Algunos principiantes quieren aprender Python, Docker, Linux, Git, frameworks web
+y análisis de datos al mismo tiempo. Eso solo crea estrés.</p>
+
+<p><em>Qué hacer:</em> primero domina lo básico de Python. Luego elige un camino:
+<strong>automatización, desarrollo web, data, ciberseguridad</strong>, etc., y avanza paso a paso.</p>
+
+<h2>5. Compararse con otras personas en redes sociales</h2>
+<p>En redes ves personas que dicen que en 3 meses ya son “senior”.
+Eso puede hacerte sentir lento, pero la realidad es que cada persona tiene su ritmo
+y muchas historias en internet no muestran todo el contexto.</p>
+
+<p><em>Qué hacer:</em> compárate contigo mismo: ¿sabes hoy más que hace un mes?
+Si la respuesta es sí, vas por buen camino.</p>
+
+<h2>6. No pedir ayuda cuando te trabas</h2>
+<p>Quedarte bloqueado horas en un error que podrías resolver en 10 minutos
+preguntando es una pérdida de energía tremenda.</p>
+
+<p><em>Qué hacer:</em> aprende a buscar errores en Google, en la documentación oficial,
+y si hace falta, pregunta en comunidades de Python o a alguien con más experiencia.</p>
+
+<h2>7. Rendirse justo cuando iba a empezar a funcionar</h2>
+<p>Muchos abandonan cuando llegan a una parte que se siente “difícil”:
+funciones, clases, errores raros, etc. Pero normalmente, justo después de ese punto
+es cuando todo empieza a tener sentido.</p>
+
+<p><em>Qué hacer:</em> acepta que habrá momentos incómodos.
+Tómalos como señal de que estás creciendo, no como señal de que “no sirves para esto”.</p>
+
+<h2>Conclusión</h2>
+<p>Python no es solo para genios ni para personas con título universitario.
+Si evitas estos errores y te mantienes constante, puedes construir proyectos reales,
+mejorar tu perfil profesional y abrirte puertas en tecnología, paso a paso.</p>
     """
 
-    # ----------------------------
-    # GUARDAR EN LA BASE DE DATOS
-    # ----------------------------
-
+    # ========= INSERTAR EN LA TABLA =========
     cur.execute(
         """
-        INSERT INTO posts (title, slug, date, tags, excerpt, content_html)
+        INSERT INTO posts (title, slug, date, tags, excerpt, content)
         VALUES (?, ?, ?, ?, ?, ?)
         """,
-        (title, slug, date_str, tags, excerpt, content_html.strip())
+        (title, slug, date_str, tags, excerpt, content_html.strip()),
     )
 
     conn.commit()
+    print("✅ Post creado correctamente con ID:", cur.lastrowid)
     conn.close()
-    print("✔ NUEVO POST AGREGADO CORRECTAMENTE")
+
 
 if __name__ == "__main__":
     main()
