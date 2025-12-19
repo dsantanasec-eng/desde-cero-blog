@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rosa Azul Brillante</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: radial-gradient(circle at 50% 40%, #132238 0%, #070b12 55%, #05070c 100%);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    }
+    canvas{ display:block; }
+    .hint{
+      position: fixed; bottom: 14px; left: 14px;
+      color: rgba(255,255,255,.65);
+      font-size: 13px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="700" height="700"></canvas>
+  <div class="hint">Tip: mueve el mouse para inclinar la rosa ✨</div>
+
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  const s = Math.min(window.innerWidth, window.innerHeight);
+  canvas.width  = Math.floor(s * 0.9);
+  canvas.height = Math.floor(s * 0.9);
+}
+window.addEventListener("resize", resize);
+resize();
+
+let t = 0;
+let mx = 0, my = 0;
+window.addEventListener("mousemove", (e) => {
+  const r = canvas.getBoundingClientRect();
+  mx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+  my = (e.clientY - (r.top  + r.height/2)) / (r.height/2);
+});
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+function drawBackgroundGlow() {
+  const cx = canvas.width/2, cy = canvas.height/2;
+  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, canvas.width*0.55);
+  g.addColorStop(0, "rgba(70,140,255,0.18)");
+  g.addColorStop(0.35, "rgba(60,120,240,0.08)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+function petalPath(size) {
+  // Pétalo tipo “gota”
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(size*0.35, -size*0.15, size*0.55, -size*0.75, 0, -size);
+  ctx.bezierCurveTo(-size*0.55, -size*0.75, -size*0.35, -size*0.15, 0, 0);
+  ctx.closePath();
+}
+
+function shade(colorA, colorB, mix){
+  // mix 0..1
+  // truquito: usar rgba pre-hechas
+  return mix < 0.5 ? colorA : colorB;
+}
+
+function drawRose(progress) {
+  const cx = canvas.width/2;
+  const cy = canvas.height/2 + canvas.height*0.06;
+
+  // Inclinación suave con el mouse (solo efecto visual)
+  const tiltX = clamp(mx, -1, 1) * 0.35;
+  const tiltY = clamp(my, -1, 1) * 0.25;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(tiltX * 0.35);
+
+  // Tallo
+  ctx.save();
+  ctx.rotate(-tiltX*0.15);
+  ctx.lineWidth = canvas.width * 0.012;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(40, 180, 110, 0.75)";
+  ctx.shadowBlur = canvas.width * 0.02;
+  ctx.shadowColor = "rgba(40,180,110,0.35)";
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height*0.18);
+  ctx.quadraticCurveTo(tiltX*canvas.width*0.05, canvas.height*0.30, 0, canvas.height*0.40);
+  ctx.stroke();
+  ctx.restore();
+
+  // Hojas
+  function leaf(x,y,rot,scale){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.scale(scale, scale);
+    ctx.shadowBlur = canvas.width * 0.018;
+    ctx.shadowColor = "rgba(40,180,110,0.25)";
+    ctx.fillStyle = "rgba(35, 160, 95, 0.85)";
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(55, -30, 110, 0);
+    ctx.quadraticCurveTo(55, 40, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+  leaf(-canvas.width*0.09, canvas.height*0.26, -0.8 + tiltY*0.2, 0.28);
+  leaf( canvas.width*0.06, canvas.height*0.30,  0.5 + tiltY*0.2, 0.25);
+
+  // Flor (pétalos)
+  const petals = 90;             // más = más realista
+  const maxSize = canvas.width * 0.16;
+  const wind = Math.sin(t*0.9) * 0.05;
+
+  // Glow general
+  ctx.shadowBlur = canvas.width * 0.035;
+  ctx.shadowColor = "rgba(70,140,255,0.45)";
+
+  for (let i = 0; i < petals; i++) {
+    const p = i / (petals - 1);
+
+    // Progreso de "florecer" (0..1)
+    const open = progress;
+
+    // Espiral tipo rosa: radio crece con p y la rotación también
+    const spiral = p ** 1.7;
+    const radius = maxSize * 0.05 + maxSize * 0.82 * spiral * open;
+
+    const rot = (p * 10.5 * Math.PI) + wind + tiltX*0.15;
+    const x = Math.cos(rot) * radius * (0.95 + tiltY*0.10);
+    const y = Math.sin(rot) * radius * (0.55 + tiltY*0.10);
+
+    // Tamaño del pétalo: más pequeño en el centro
+    const size = (maxSize * (0.10 + 0.95 * p)) * (0.25 + 0.75*open);
+
+// Color: degradado azul profundo → azul claro
+const deep  = `rgba(30, 90, 230, ${0.85 - p * 0.35})`;
+const light = `rgba(120, 200, 255, ${0.65 - p * 0.25})`;
+
+ctx.fillStyle = (p < 0.55) ? deep : light;
+
+    // Dibujar pétalo
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot + Math.PI/2 + tiltY*0.25);
+
+    // Un poco de "curvatura" (escala)
+    ctx.scale(1.0, 1.0 - p*0.35);
+
+    // brillo por pétalo
+    ctx.globalAlpha = 0.95 - p*0.25;
+
+    petalPath(size);
+    ctx.fill();
+
+    // borde sutil
+    ctx.globalAlpha = 0.18;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // Centro brillante
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  ctx.shadowBlur = canvas.width * 0.06;
+  ctx.shadowColor = "rgba(120,200,255,0.65)";
+  ctx.fillStyle = "rgba(180, 230, 255, 0.85)";
+  ctx.beginPath();
+  ctx.arc(0, 0, canvas.width*0.012 + (1-progress)*canvas.width*0.01, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.restore();
+}
+
+function animate(){
+  t += 0.016;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawBackgroundGlow();
+
+  // “Florecer” suave al inicio y luego loop leve
+  const base = Math.min(t/2.2, 1);
+  const pulse = 0.04 * Math.sin(t*1.2);
+  const progress = clamp(base + pulse, 0, 1);
+
+  drawRose(progress);
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

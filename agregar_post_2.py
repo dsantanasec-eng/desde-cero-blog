@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime
 
-# Ruta a la base de datos
+# Database path
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "mi_blog.db"
 
@@ -10,81 +10,51 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    title = "7 Beginner Cybersecurity Projects That Actually Help You Get a Job"
-    slug = "beginner-cybersecurity-projects-usa-2025"
-
-    date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-
-    tags = "cybersecurity, beginner, projects, usa, career, portfolio"
-
+    title = "Why Learning Basic HTML Still Matters in 2025"
+    slug = "why-learning-basic-html-still-matters-2025"  # MUST BE UNIQUE
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    tags = "html, web development, beginners, usa, programming"
     excerpt = (
-        "If you're starting in cybersecurity, projects matter more than certificates. "
-        "These beginner-friendly projects help you build real skills, confidence, and a portfolio "
-        "that recruiters in the U.S. actually care about."
+        "HTML is still the foundation of the web. Understanding it gives you "
+        "an advantage when learning programming, web development, or tech careers."
     )
 
     content_html = """
-    <h2>Why beginner cybersecurity projects matter</h2>
+    <h2>HTML Is the Foundation of the Web</h2>
     <p>
-    In the U.S. tech market, employers care less about theory and more about proof.
-    Projects show that you can apply knowledge, solve problems, and think like a security professional.
+    Every website you visit, every landing page, every blog, and even many apps
+    start with HTML. While modern tools exist, HTML remains essential knowledge.
     </p>
 
-    <h2>1. Password Strength Checker</h2>
+    <h2>Why This Matters in the U.S. Tech Market</h2>
     <p>
-    This project teaches you about authentication risks and brute-force attacks.
-    It shows employers you understand basic security hygiene.
+    In the United States, many entry-level tech roles expect at least a basic
+    understanding of HTML. It helps you communicate with developers, designers,
+    and understand how the web actually works.
     </p>
 
-    <h2>2. Simple Port Scanner (Python)</h2>
+    <h2>HTML Helps You Learn Faster</h2>
     <p>
-    A classic beginner project that introduces networking fundamentals and how attackers discover open services.
+    When you understand HTML, learning CSS, JavaScript, and even backend
+    frameworks becomes much easier. You stop guessing and start building.
     </p>
 
-    <h2>3. Log Analyzer for Suspicious Activity</h2>
+    <h2>Final Thought</h2>
     <p>
-    Teaches you how SOC analysts detect anomalies using real log data.
-    </p>
-
-    <h2>4. Phishing Email Detector</h2>
-    <p>
-    Extremely relevant in the U.S. job market where phishing is the #1 attack vector.
-    </p>
-
-    <h2>5. File Integrity Monitor</h2>
-    <p>
-    Shows understanding of malware detection and system monitoring.
-    </p>
-
-    <h2>6. Basic Vulnerability Scanner</h2>
-    <p>
-    Introduces you to CVEs, scanning logic, and risk assessment.
-    </p>
-
-    <h2>7. Simple Firewall Rules Simulator</h2>
-    <p>
-    Demonstrates knowledge of traffic filtering and network security concepts.
-    </p>
-
-    <h2>Final advice</h2>
-    <p>
-    You don't need expensive certifications to start.
-    One solid project explained well can open doors faster than you think.
+    You don’t need to master HTML, but learning the basics is one of the smartest
+    moves you can make if you want to grow in tech in 2025.
     </p>
     """
 
-    cur.execute(
-        """
-        INSERT INTO posts (title, slug, date, tags, excerpt, content)
+    cur.execute("""
+        INSERT INTO posts (title, slug, date, tags, excerpt, content_html)
         VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (title, slug, date_str, tags, excerpt, content_html.strip())
-    )
+    """, (title, slug, date_str, tags, excerpt, content_html.strip()))
 
     conn.commit()
     conn.close()
 
-    print("✅ Post USA inserted successfully")
+    print("✅ Post inserted successfully.")
 
 if __name__ == "__main__":
     main()

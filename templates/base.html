@@ -5,91 +5,118 @@
     <title>{% block title %}Desde Cero | Blog{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Fuente Google -->
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- ESTILOS ORIGINALES -->
     <style>
+        :root {
+            --bg-main: #f8fafc;
+            --bg-nav: #ffffff;
+            --primary: #2563eb;
+            --primary-soft: #e0e7ff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-soft: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: "Poppins", sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e1b4b);
-            color: white;
+            background: var(--bg-main);
+            color: var(--text-main);
         }
 
+        /* NAVBAR */
         .navbar {
-            background: rgba(0,0,0,0.35);
+            background: var(--bg-nav);
+            border-bottom: 1px solid var(--border-soft);
             padding: 14px 22px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
-            backdrop-filter: blur(10px);
+            z-index: 50;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             text-decoration: none;
         }
 
         .brand img {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             object-fit: contain;
         }
 
         .brand-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .brand-sub {
             font-size: 0.75rem;
-            color: #cbd5e1;
+            color: var(--text-muted);
         }
 
+        /* LINKS */
         .nav-links a {
             text-decoration: none;
-            color: #cbd5e1;
-            margin-left: 15px;
+            color: var(--text-muted);
+            margin-left: 18px;
             font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
         }
 
-        .nav-links a:hover,
+        .nav-links a:hover {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
         .nav-active {
-            color: #fff;
+            background: var(--primary);
+            color: #ffffff !important;
             font-weight: 600;
         }
 
+        /* PAGE */
         .page {
-            max-width: 900px;
+            max-width: 920px;
             margin: 2.5rem auto;
             padding: 0 1rem;
         }
 
+        /* FOOTER */
         footer {
-            margin-top: 3rem;
-            padding: 1.5rem;
-            background: rgba(0,0,0,0.25);
+            margin-top: 4rem;
+            padding: 2rem 1rem;
+            background: #ffffff;
+            border-top: 1px solid var(--border-soft);
             text-align: center;
             font-size: 0.8rem;
-            color: #cbd5e1;
+            color: var(--text-muted);
         }
     </style>
-
 </head>
+
 <body>
 
 <header class="navbar">
     <a href="{{ url_for('home') }}" class="brand">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Desde Cero Logo">
         <div>
             <div class="brand-title">Desde Cero</div>
-            <div class="brand-sub">Aprende, aplica y gana experiencia</div>
+            <div class="brand-sub">Learn skills. Build experience. Grow.</div>
         </div>
     </a>
 
@@ -105,7 +132,7 @@
 </main>
 
 <footer>
-    © 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
+    © 2025 Desde Cero · Built with Flask · By Diomedes Santana
 </footer>
 
 </body>
