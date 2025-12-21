@@ -1,48 +1,95 @@
 {% extends "base.html" %}
+{% set active_page = 'blog' %}
+
 {% block title %}Blog | Desde Cero{% endblock %}
 
 {% block content %}
-<header class="blog-header">
-  <div class="kicker">Blog</div>
-  <h1 class="blog-title">Publicaciones recientes</h1>
-  <p class="blog-subtitle">Artículos pensados para ayudarte a avanzar desde cero, sin abrumarte.</p>
-</header>
+<style>
+  .wrap{ padding-top: 6px; }
+  .header{ margin-bottom: 18px; }
+  .header h1{ margin:0; font-size:1.9rem; }
+  .header p{ margin:8px 0 0; color: var(--muted); }
 
-{% if posts %}
-  <div class="blog-grid">
-    {% for post in posts %}
-      <article class="card post-card">
-        <h2>
-          <a href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
-        </h2>
+  .grid{
+    display:grid;
+    gap:16px;
+  }
+  @media(min-width:900px){
+    .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
 
-        <div class="meta">
-          {{ post['date']|fecha }}
-          {% if post['tags'] %} · {{ post['tags'] }}{% endif %}
-        </div>
+  .post-card{
+    padding: 18px;
+  }
+  .post-card h2{
+    margin:0 0 8px;
+    font-size:1.05rem;
+    line-height:1.25;
+  }
+  .post-card h2 a{
+    color: var(--text);
+    text-decoration:none;
+    font-weight:800;
+  }
+  .post-card h2 a:hover{ text-decoration:underline; }
 
-        {% if post['excerpt'] %}
-          <p class="excerpt">{{ post['excerpt'] }}</p>
-        {% endif %}
+  .meta{
+    color: var(--muted);
+    font-size:.88rem;
+    margin-bottom: 10px;
+  }
 
-        {% if post['tags'] %}
-          <div class="tags">
-            {% for tag in post['tags'].split(',') %}
-              <span class="tag">{{ tag.strip() }}</span>
-            {% endfor %}
+  .excerpt{ margin:0; color: var(--muted); font-size:.95rem; }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+
+  .read{
+    margin-top: 12px;
+    display:inline-flex;
+    font-weight:800;
+    color: var(--blue);
+    text-decoration:none;
+  }
+  .read:hover{ text-decoration:underline; }
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="chip">BLOG</div>
+    <h1 style="margin-top:10px;">Publicaciones recientes</h1>
+    <p>Artículos pensados para ayudarte a avanzar desde cero, sin abrumarte.</p>
+  </div>
+
+  {% if posts %}
+    <div class="grid">
+      {% for post in posts %}
+        <article class="card post-card">
+          <h2>
+            <a href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
+          </h2>
+
+          <div class="meta">
+            {{ post['date']|fecha }}
           </div>
-        {% endif %}
 
-        <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
-      </article>
-    {% endfor %}
-  </div>
-{% else %}
-  <div class="card article-body">
-    <p class="excerpt">
-      Todavía no hay publicaciones en el blog. Muy pronto empezaré a compartir artículos
-      sobre Python, proyectos reales y carrera profesional.
-    </p>
-  </div>
-{% endif %}
+          {% if post['excerpt'] %}
+            <p class="excerpt">{{ post['excerpt'] }}</p>
+          {% endif %}
+
+          {% if post['tags'] %}
+            <div class="chips">
+              {% for tag in post['tags'].split(',') %}
+                <span class="chip">{{ tag.strip() }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <a class="read" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="color:var(--muted);">Todavía no hay publicaciones.</p>
+  {% endif %}
+</div>
 {% endblock %}

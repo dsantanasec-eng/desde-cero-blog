@@ -3,36 +3,49 @@
 {% block title %}{{ post['title'] }} | Desde Cero{% endblock %}
 
 {% block content %}
-<section class="page-wrap">
-  <div class="card hero-card">
-    <div class="kicker">ARTÍCULO</div>
-    <h1 class="title">{{ post['title'] }}</h1>
+<style>
+  .post-hero{
+    padding: 22px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, rgba(29,78,216,.18), rgba(255,255,255,.7));
+  }
+  .post-hero .k{ letter-spacing:.22em; text-transform:uppercase; font-size:.78rem; color:#1e3a8a; }
+  .post-hero h1{ margin:10px 0 8px; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height:1.12; }
+  .post-meta{ color: var(--muted); font-size:.92rem; }
 
-    <div class="meta">
-      <span><strong>Publicado:</strong> {{ post['date']|fecha }}</span>
-      {% if post['tags'] %}
-        <span class="dot">•</span>
-        <span class="tags-line"><strong>Etiquetas:</strong> {{ post['tags'] }}</span>
-      {% endif %}
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+
+  .content-card{ padding: 22px; }
+  .content-card p, .content-card li{ color: #1f2937; }
+  .content-card h2, .content-card h3{ margin-top: 20px; }
+
+  /* nice content spacing */
+  .content-card :first-child{ margin-top:0; }
+</style>
+
+<section class="card post-hero">
+  <div class="k">Artículo</div>
+  <h1>{{ post['title'] }}</h1>
+
+  <div class="post-meta">
+    <strong>Publicado:</strong> {{ post['date']|fecha }}
+  </div>
+
+  {% if post['tags'] %}
+    <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
+      {% for tag in post['tags'].split(',') %}
+        <span class="chip">{{ tag.strip() }}</span>
+      {% endfor %}
     </div>
+  {% endif %}
 
-    {% if post['tags'] %}
-      <div class="chips">
-        {% for tag in post['tags'].split(',') %}
-          <span class="chip">{{ tag.strip() }}</span>
-        {% endfor %}
-      </div>
-    {% endif %}
-  </div>
-
-  <div class="card content-card">
-    {# IMPORTANTE: aquí usamos content_html y safe #}
-    {{ (post['content_html'] or "") | safe }}
-  </div>
-
-  <div class="btn-row">
+  <div class="actions">
     <a class="btn btn-primary" href="{{ url_for('blog_list') }}">← Volver al blog</a>
     <a class="btn" href="{{ url_for('home') }}">Ir al inicio</a>
   </div>
+</section>
+
+<section class="card content-card">
+  {{ post['content']|safe }}
 </section>
 {% endblock %}

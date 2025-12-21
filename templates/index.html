@@ -1,51 +1,85 @@
 {% extends "base.html" %}
+{% set active_page = 'home' %}
+
 {% block title %}Desde Cero | Aprende, aplica y gana experiencia{% endblock %}
 
 {% block content %}
-<section class="hero">
+<style>
+  .hero{
+    padding: 34px 30px;
+    overflow:hidden;
+    position:relative;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:-120px -120px auto auto;
+    width:420px; height:420px;
+    background: radial-gradient(circle, rgba(29,78,216,.18), transparent 60%);
+    transform: rotate(12deg);
+  }
+  .hero-grid{
+    display:grid;
+    gap:18px;
+    position:relative;
+  }
+  .kicker{ font-size:.8rem; letter-spacing:.22em; text-transform:uppercase; color:#1e3a8a; }
+  h1{
+    margin:0;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    line-height:1.1;
+  }
+  .sub{
+    margin:0;
+    color: var(--muted);
+    max-width: 58ch;
+  }
+  .cta{ display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; }
+  .mini{
+    color: var(--muted);
+    font-size:.9rem;
+    margin-top: 8px;
+  }
+
+  .latest{
+    margin-top: 26px;
+    padding: 22px;
+  }
+  .latest h2{ margin:0 0 6px; font-size:1.1rem; }
+  .latest a{ text-decoration:none; font-weight:800; color: var(--blue); }
+  .latest a:hover{ text-decoration:underline; }
+  .meta{ color: var(--muted); font-size:.9rem; margin: 8px 0 0; }
+</style>
+
+<section class="card hero">
   <div class="hero-grid">
-    <div>
-      <div class="kicker">Bienvenido</div>
-      <h1>Empieza desde cero y construye algo real en internet</h1>
-      <p>
-        Contenido práctico sobre programación, proyectos y carrera tech.
-        Enfocado en resultados y pasos concretos (sin humo).
-      </p>
+    <div class="kicker">Bienvenido</div>
 
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ url_for('blog_list') }}">Explorar artículos →</a>
-        <a class="btn" href="{{ url_for('about') }}">Conoce mi historia</a>
-      </div>
+    <h1>Empieza desde cero y construye algo real en internet</h1>
 
-      <p class="small" style="margin-top:12px;">
-        ✅ Sitemap activo · SEO básico aplicado · Próximo: más contenido y optimización.
-      </p>
+    <p class="sub">
+      Contenido práctico sobre programación, proyectos y carrera tech. Enfocado en resultados
+      y pasos concretos (sin humo).
+    </p>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="{{ url_for('blog_list') }}">Explorar artículos →</a>
+      <a class="btn" href="{{ url_for('about') }}">Conoce mi historia</a>
     </div>
 
-    <aside class="hero-side">
-      <div class="badge">Estado</div>
-      <h3 style="margin-top:10px;">Progreso del sitio</h3>
-      <p class="small" style="margin:0;">
-        Indexación en curso. Publicando contenido constantemente para acelerar crecimiento.
-      </p>
-    </aside>
+    <p class="mini">
+      <span class="chip">Hoy</span> {{ fecha }}
+    </p>
   </div>
 </section>
 
-<section style="margin-top:18px;">
-  <div class="card article-body">
-    <div class="badge">Último artículo</div>
-
-    {% if post %}
-      <h2 style="margin:10px 0 6px;">
-        <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
-      </h2>
-      <div class="meta">{{ post['date']|fecha }}{% if post['tags'] %} · {{ post['tags'] }}{% endif %}</div>
-      {% if post['excerpt'] %}<p class="excerpt">{{ post['excerpt'] }}</p>{% endif %}
-      <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
-    {% else %}
-      <p class="excerpt">Todavía no hay artículos publicados. Muy pronto habrá contenido nuevo.</p>
-    {% endif %}
-  </div>
+<section class="card latest">
+  <h2>Último artículo publicado</h2>
+  {% if post %}
+    <a href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
+    <p class="meta">{{ post['date']|fecha }}{% if post['tags'] %} · {{ post['tags'] }}{% endif %}</p>
+    {% if post['excerpt'] %}<p style="margin:10px 0 0; color:var(--muted);">{{ post['excerpt'] }}</p>{% endif %}
+  {% else %}
+    <p style="margin:0; color:var(--muted);">Todavía no hay artículos publicados.</p>
+  {% endif %}
 </section>
 {% endblock %}
