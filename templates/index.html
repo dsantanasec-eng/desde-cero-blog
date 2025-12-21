@@ -65,7 +65,7 @@
     font-size: 1.02rem;
   }
 
-  /* chip fecha arriba derecha */
+  /* chip fecha */
   .date-chip{
     position:absolute;
     top: 16px;
@@ -81,7 +81,18 @@
     font-size: .85rem;
     font-weight: 600;
     backdrop-filter: blur(10px);
+    z-index: 3;
   }
+
+  /* ✅ EN MÓVIL: que NO sea absoluta para que no se monte */
+  @media (max-width: 979px){
+    .date-chip{
+      position: static;
+      margin-bottom: .9rem;
+      width: fit-content;
+    }
+  }
+
   .dot{
     width: 8px;
     height: 8px;
@@ -190,17 +201,28 @@
     font-weight: 800;
     margin-bottom:.55rem;
   }
+
   .latest h2{
     margin: 0 0 .4rem;
     font-size: 1.25rem;
     color:#0f172a;
   }
-  .latest a{
+
+  /* ✅ IMPORTANTE: Solo el link del título, no “todos los <a>” */
+  .latest a.post-link{
     color: #2563eb;
     font-weight: 800;
     text-decoration: none;
   }
-  .latest a:hover{ text-decoration: underline; }
+  .latest a.post-link:hover{ text-decoration: underline; }
+
+  /* ✅ Asegurar que el botón dentro de .latest SIEMPRE se vea */
+  .latest a.btn,
+  .latest a.btn-primary{
+    color: white !important;
+    text-decoration: none !important;
+  }
+
   .meta{
     color: rgba(15,23,42,.60);
     font-size: .9rem;
@@ -215,6 +237,7 @@
 
 <div class="home-wrap">
   <section class="hero-card">
+
     <div class="date-chip">
       <span class="dot"></span>
       Hoy: {{ fecha }}
@@ -278,7 +301,7 @@
 
     {% if post %}
       <h2>
-        <a href="{{ url_for('post_detail', slug=post['slug']) }}">
+        <a class="post-link" href="{{ url_for('post_detail', slug=post['slug']) }}">
           {{ post['title'] }}
         </a>
       </h2>
