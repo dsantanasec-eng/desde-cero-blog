@@ -10,32 +10,187 @@
 
   <!-- CSS GLOBAL (IMPORTANTE) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Estilos base (fallback por si el CSS no carga) -->
+  <style>
+    :root{
+      --bg:#f6f9ff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --border:rgba(15,23,42,.12);
+      --blue:#2563eb;
+      --blue2:#3b82f6;
+      --shadow:0 18px 45px rgba(2,6,23,.10);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 450px at 15% 0%, rgba(59,130,246,.18), transparent 55%),
+        radial-gradient(900px 450px at 85% 10%, rgba(37,99,235,.12), transparent 55%),
+        var(--bg);
+    }
+    a{color:var(--blue); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .navbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:blur(10px);
+      background:rgba(255,255,255,.75);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none;
+      min-width:220px;
+    }
+    .brand img{
+      width:34px; height:34px; object-fit:contain;
+      filter: drop-shadow(0 6px 10px rgba(2,6,23,.10));
+    }
+    .brand-title{font-weight:700; letter-spacing:.2px; color:var(--text); line-height:1.1}
+    .brand-sub{font-size:.78rem; color:var(--muted); margin-top:2px}
+
+    .nav-links{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .nav-links a{
+      padding:9px 12px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:.92rem;
+      border:1px solid transparent;
+      transition:.15s ease-out;
+    }
+    .nav-links a:hover{
+      background:rgba(37,99,235,.08);
+      border-color:rgba(37,99,235,.20);
+      color:var(--text);
+      text-decoration:none;
+    }
+    .nav-active{
+      background:linear-gradient(135deg, rgba(37,99,235,.16), rgba(59,130,246,.10));
+      border-color:rgba(37,99,235,.25) !important;
+      color:var(--text) !important;
+      font-weight:600;
+    }
+
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+    }
+
+    /* Componentes reutilizables (para que todo se vea consistente) */
+    .section{
+      background:rgba(255,255,255,.72);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:26px;
+    }
+    .article-body h1{margin:0 0 10px; font-size:2rem}
+    .article-body h2{margin:18px 0 8px; font-size:1.15rem}
+    .article-body p{color:var(--muted); line-height:1.75; margin:10px 0}
+    .badge{
+      display:inline-block;
+      font-size:.72rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--blue);
+      background:rgba(37,99,235,.10);
+      border:1px solid rgba(37,99,235,.18);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-bottom:10px;
+      font-weight:600;
+    }
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(15,23,42,.14), transparent);
+      margin:18px 0;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.14);
+      background:#fff;
+      color:var(--text);
+      font-weight:600;
+      transition:.15s ease-out;
+      box-shadow:0 12px 26px rgba(2,6,23,.08);
+      text-decoration:none;
+    }
+    .btn:hover{transform:translateY(-1px); text-decoration:none}
+    .btn-primary{
+      background:linear-gradient(135deg, var(--blue), var(--blue2));
+      color:#fff;
+      border-color:rgba(37,99,235,.40);
+      box-shadow:0 18px 40px rgba(37,99,235,.20);
+    }
+
+    footer{
+      margin-top:34px;
+      padding:22px 18px;
+      color:var(--muted);
+      border-top:1px solid var(--border);
+      background:rgba(255,255,255,.70);
+    }
+    .footer-inner{
+      max-width:1100px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      font-size:.85rem;
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
 </head>
+
 <body>
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="{{ url_for('home') }}" class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        <div>
+          <div class="brand-title">Desde Cero</div>
+          <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
+        </div>
+      </a>
 
-<header class="navbar">
-  <a href="{{ url_for('home') }}" class="brand">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo">
-    <div class="brand-text">
-      <div class="brand-title">Desde Cero</div>
-      <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
+      <nav class="nav-links">
+        <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
+        <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
+        <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
+      </nav>
     </div>
-  </a>
+  </header>
 
-  <nav class="nav-links">
-    <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
-    <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
-    <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
-  </nav>
-</header>
+  <main class="page">
+    {% block content %}{% endblock %}
+  </main>
 
-<main class="page">
-  {% block content %}{% endblock %}
-</main>
-
-<footer class="footer">
-  ©️ 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
-</footer>
-
+  <footer>
+    <div class="footer-inner">
+      <div>©️ 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask</div>
+      <div style="opacity:.9">Diseño: Light blue professional</div>
+    </div>
+  </footer>
 </body>
 </html>
