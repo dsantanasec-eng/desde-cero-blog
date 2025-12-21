@@ -1,181 +1,42 @@
 <!doctype html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Desde Cero | Aprende Tecnología{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <title>{% block title %}Desde Cero{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --primary: #2563eb;       /* Azul profesional */
-            --primary-soft: #dbeafe;  /* Azul claro */
-            --text-dark: #0f172a;
-            --text-muted: #475569;
-            --bg-main: #f8fafc;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: "Inter", sans-serif;
-            background: var(--bg-main);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* ================= NAVBAR ================= */
-        .navbar {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .brand img {
-            width: 36px;
-            height: 36px;
-        }
-
-        .brand-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-muted);
-            margin-left: 18px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding-bottom: 4px;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .nav-active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        /* ================= PAGE ================= */
-        .page {
-            max-width: 960px;
-            margin: 3rem auto;
-            padding: 0 1.2rem;
-        }
-
-        /* ================= CARDS ================= */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.6rem;
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.08);
-            transform: translateY(-3px);
-        }
-
-        /* ================= BUTTONS ================= */
-        .btn {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .btn:hover {
-            background: #1d4ed8;
-        }
-
-        /* ================= FOOTER ================= */
-        footer {
-            margin-top: 4rem;
-            padding: 2rem 1rem;
-            background: #ffffff;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        footer strong {
-            color: var(--text-dark);
-        }
-
-        /* ================= RESPONSIVE ================= */
-        @media (max-width: 600px) {
-            .nav-links a {
-                margin-left: 12px;
-                font-size: 0.85rem;
-            }
-
-            .brand-title {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <!-- CSS global -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-
-<header class="navbar">
-    <a href="{{ url_for('home') }}" class="brand">
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="{{ url_for('home') }}" class="brand">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-        <div>
-            <div class="brand-title">Desde Cero</div>
-            <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
+        <div class="brand-text">
+          <div class="brand-title">Desde Cero</div>
+          <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
         </div>
-    </a>
+      </a>
 
-    <nav class="nav-links">
+      <nav class="nav-links">
         <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
         <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
         <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
-    </nav>
-</header>
+      </nav>
+    </div>
+  </header>
 
-<main class="page">
+  <main class="page">
     {% block content %}{% endblock %}
-</main>
+  </main>
 
-<footer>
-    © 2025 <strong>Desde Cero</strong> · Hecho por Diomedes Santana · Built with Flask
-</footer>
-
+  <footer class="footer">
+    ©️ 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
+  </footer>
 </body>
 </html>

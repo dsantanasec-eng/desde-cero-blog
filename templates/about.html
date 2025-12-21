@@ -1,34 +1,31 @@
 {% extends "base.html" %}
-
 {% block title %}Acerca de | Desde Cero{% endblock %}
 
 {% block content %}
+<section class="card section">
+  <div class="kicker">ABOUT</div>
+  <h1 class="h1">¿Qué es “Desde Cero”?</h1>
+  <p class="lead">
+    Un blog simple y honesto para aprender programación, construir proyectos reales
+    y documentar el camino paso a paso.
+  </p>
 
-<section class="section">
-    <div class="article-body">
-        <h1 style="margin-top:0;">¿Qué es “Desde Cero”?</h1>
-        <p>
-            Es mi espacio personal para documentar cómo voy aprendiendo programación,
-            construyendo proyectos reales y buscando formas honestas de generar ingresos
-            por internet, empezando desde cero.
-        </p>
-        <p>
-            Comparto lo que me funciona, lo que no, y las decisiones que voy tomando,
-            para que si tú estás en un punto parecido, puedas usar mis aprendizajes
-            como atajos en tu propio camino.
-        </p>
+  <div class="divider"></div>
 
-        <h2>Sobre mí</h2>
-        <p>
-            Soy Diomedes Santana, estudiante de desarrollo de software y apasionado por la
-            ciberseguridad, la tecnología y la mejora constante. Trabajo y estudio, así que
-            todo lo que ves aquí está pensado para personas que también tienen el tiempo justo.
-        </p>
+  <h2 style="margin:0 0 8px;">Sobre mí</h2>
+  <p style="margin:0 0 10px; color: var(--muted);">
+    Soy Diomedes Santana, estudiante de desarrollo de software y apasionado por la ciberseguridad,
+    la tecnología y la mejora constante. Trabajo y estudio, así que este contenido está pensado
+    para personas con tiempo limitado.
+  </p>
 
-        <p>
-            Si algo de lo que lees aquí te sirve, ya el blog cumplió su objetivo.
-        </p>
-    </div>
+  <p style="margin:0; color: var(--muted);">
+    Si algo de lo que lees aquí te ayuda, ya el blog cumplió su objetivo.
+  </p>
+
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="{{ url_for('blog_list') }}">Ver artículos</a>
+    <a class="btn btn-soft" href="{{ url_for('home') }}">Volver al inicio</a>
+  </div>
 </section>
-
 {% endblock %}
