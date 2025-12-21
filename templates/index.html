@@ -14,20 +14,23 @@
   .hero-card{
     position: relative;
     border-radius: 22px;
-    padding: 2.2rem 2rem;
+    padding: 3.4rem 2rem 2.2rem; /* ⬅ MÁS espacio arriba */
     background: linear-gradient(135deg, rgba(59,130,246,.20), rgba(99,102,241,.12), rgba(255,255,255,.65));
     border: 1px solid rgba(15,23,42,.12);
     box-shadow: 0 18px 50px rgba(15,23,42,.10);
     overflow: hidden;
   }
+
   .hero-card:before{
     content:"";
     position:absolute;
     inset:-2px;
-    background: radial-gradient(circle at 15% 10%, rgba(59,130,246,.25), transparent 55%),
-                radial-gradient(circle at 90% 30%, rgba(99,102,241,.20), transparent 55%);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(59,130,246,.25), transparent 55%),
+      radial-gradient(circle at 90% 30%, rgba(99,102,241,.20), transparent 55%);
     pointer-events:none;
   }
+
   .hero-inner{
     position: relative;
     display: grid;
@@ -35,62 +38,29 @@
     gap: 1.4rem;
     align-items: start;
   }
+
   @media (min-width: 980px){
     .hero-inner{ grid-template-columns: 1.2fr .8fr; }
-    .hero-card{ padding: 2.6rem 2.6rem; }
+    .hero-card{ padding: 3.6rem 2.6rem 2.6rem; }
   }
 
-  .kicker{
-    font-size: .78rem;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: rgba(15,23,42,.65);
-    font-weight: 600;
-    margin: 0 0 .7rem;
-  }
-  .title{
-    margin: 0 0 .7rem;
-    font-size: 2.05rem;
-    line-height: 1.08;
-    color: #0f172a;
-    font-weight: 800;
-  }
-  @media (min-width: 980px){
-    .title{ font-size: 2.6rem; }
-  }
-  .subtitle{
-    margin: 0 0 1.2rem;
-    color: rgba(15,23,42,.72);
-    max-width: 52ch;
-    font-size: 1.02rem;
-  }
-
-  /* chip fecha */
+  /* FECHA */
   .date-chip{
     position:absolute;
-    top: 16px;
-    right: 16px;
+    top: 18px;   /* ⬅ más abajo */
+    right: 18px;
+    z-index: 3;
     display:inline-flex;
     align-items:center;
     gap:.55rem;
-    padding: .45rem .7rem;
+    padding: .45rem .75rem;
     border-radius: 999px;
-    background: rgba(255,255,255,.70);
+    background: rgba(255,255,255,.85);
     border: 1px solid rgba(15,23,42,.12);
-    color: rgba(15,23,42,.72);
+    color: rgba(15,23,42,.75);
     font-size: .85rem;
     font-weight: 600;
     backdrop-filter: blur(10px);
-    z-index: 3;
-  }
-
-  /* ✅ EN MÓVIL: que NO sea absoluta para que no se monte */
-  @media (max-width: 979px){
-    .date-chip{
-      position: static;
-      margin-bottom: .9rem;
-      width: fit-content;
-    }
   }
 
   .dot{
@@ -101,8 +71,43 @@
     box-shadow: 0 0 0 4px rgba(59,130,246,.18);
   }
 
-  /* Botones */
-  .cta-row{ display:flex; gap:.8rem; flex-wrap:wrap; margin-top:.4rem; }
+  /* TEXTO */
+  .kicker{
+    font-size: .78rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(15,23,42,.65);
+    font-weight: 600;
+    margin: 0 0 .7rem;
+  }
+
+  .title{
+    margin: 0 0 .7rem;
+    font-size: 2.05rem;
+    line-height: 1.08;
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  @media (min-width: 980px){
+    .title{ font-size: 2.6rem; }
+  }
+
+  .subtitle{
+    margin: 0 0 1.2rem;
+    color: rgba(15,23,42,.72);
+    max-width: 52ch;
+    font-size: 1.02rem;
+  }
+
+  /* BOTONES */
+  .cta-row{
+    display:flex;
+    gap:.8rem;
+    flex-wrap:wrap;
+    margin-top:.4rem;
+  }
+
   .btn{
     display:inline-flex;
     align-items:center;
@@ -113,37 +118,45 @@
     text-decoration:none;
     font-weight: 700;
     border: 1px solid rgba(15,23,42,.12);
-    background: rgba(255,255,255,.65);
+    background: rgba(255,255,255,.70);
     color: #0f172a;
     transition: .15s ease;
   }
-  .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 28px rgba(15,23,42,.10); }
+
+  .btn:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(15,23,42,.10);
+  }
+
   .btn-primary{
     background: linear-gradient(135deg, #2563eb, #4f46e5);
     border-color: rgba(37,99,235,.25);
     color: white;
   }
 
-  /* Mini panel derecha */
+  /* MINI PANEL */
   .mini-panel{
     display: grid;
     gap: .8rem;
   }
+
   .mini-box{
-    background: rgba(255,255,255,.70);
+    background: rgba(255,255,255,.80);
     border: 1px solid rgba(15,23,42,.10);
     border-radius: 16px;
-    padding: 1rem 1rem;
+    padding: 1rem;
     box-shadow: 0 12px 28px rgba(15,23,42,.08);
   }
+
   .mini-label{
     font-size:.78rem;
     text-transform: uppercase;
     letter-spacing:.18em;
     color: rgba(15,23,42,.55);
     font-weight: 700;
-    margin: 0 0 .35rem;
+    margin-bottom: .35rem;
   }
+
   .mini-text{
     margin: 0;
     color: rgba(15,23,42,.76);
@@ -151,87 +164,46 @@
     line-height: 1.45;
   }
 
-  /* Cards debajo */
+  /* SECCIONES INFERIORES */
   .below-grid{
-    margin-top: 1.2rem;
+    margin-top: 1.4rem;
     display:grid;
     gap: 1rem;
     grid-template-columns: 1fr;
   }
+
   @media (min-width: 980px){
     .below-grid{ grid-template-columns: repeat(3, 1fr); }
   }
+
   .info-card{
     border-radius: 18px;
-    padding: 1.15rem 1.15rem;
-    background: rgba(255,255,255,.70);
+    padding: 1.15rem;
+    background: rgba(255,255,255,.80);
     border: 1px solid rgba(15,23,42,.10);
     box-shadow: 0 12px 30px rgba(15,23,42,.08);
   }
+
   .info-title{
-    margin: 0 0 .35rem;
     font-weight: 800;
     color:#0f172a;
-    font-size: 1.02rem;
+    margin-bottom: .35rem;
   }
+
   .info-p{
-    margin: 0;
     color: rgba(15,23,42,.74);
     font-size: .95rem;
     line-height: 1.5;
   }
 
-  /* Último post */
+  /* ÚLTIMO POST */
   .latest{
-    margin-top: 1.4rem;
+    margin-top: 1.6rem;
     border-radius: 18px;
-    padding: 1.2rem 1.2rem;
-    background: rgba(255,255,255,.70);
+    padding: 1.2rem;
+    background: rgba(255,255,255,.80);
     border: 1px solid rgba(15,23,42,.10);
     box-shadow: 0 12px 30px rgba(15,23,42,.08);
-  }
-  .latest-kicker{
-    display:inline-flex;
-    align-items:center;
-    gap:.5rem;
-    font-size:.78rem;
-    letter-spacing:.18em;
-    text-transform: uppercase;
-    color: rgba(15,23,42,.55);
-    font-weight: 800;
-    margin-bottom:.55rem;
-  }
-
-  .latest h2{
-    margin: 0 0 .4rem;
-    font-size: 1.25rem;
-    color:#0f172a;
-  }
-
-  /* ✅ IMPORTANTE: Solo el link del título, no “todos los <a>” */
-  .latest a.post-link{
-    color: #2563eb;
-    font-weight: 800;
-    text-decoration: none;
-  }
-  .latest a.post-link:hover{ text-decoration: underline; }
-
-  /* ✅ Asegurar que el botón dentro de .latest SIEMPRE se vea */
-  .latest a.btn,
-  .latest a.btn-primary{
-    color: white !important;
-    text-decoration: none !important;
-  }
-
-  .meta{
-    color: rgba(15,23,42,.60);
-    font-size: .9rem;
-    margin: .15rem 0 .55rem;
-  }
-  .excerpt{
-    color: rgba(15,23,42,.78);
-    margin: 0;
-    line-height: 1.55;
   }
 </style>
 
@@ -247,7 +219,9 @@
       <div>
         <p class="kicker">Bienvenido</p>
 
-        <h1 class="title">Empieza desde cero y construye algo real en internet</h1>
+        <h1 class="title">
+          Empieza desde cero y construye algo real en internet
+        </h1>
 
         <p class="subtitle">
           Contenido práctico sobre programación, proyectos y carrera tech.
@@ -268,7 +242,7 @@
 
         <div class="mini-box">
           <div class="mini-label">Objetivo</div>
-          <p class="mini-text">Que avances rápido con ejemplos claros y sin teoría innecesaria.</p>
+          <p class="mini-text">Avanzar rápido con ejemplos claros y sin teoría innecesaria.</p>
         </div>
 
         <div class="mini-box">
@@ -277,53 +251,6 @@
         </div>
       </div>
     </div>
-  </section>
-
-  <section class="below-grid">
-    <div class="info-card">
-      <p class="info-title">Guías claras</p>
-      <p class="info-p">Pasos concretos para aprender y construir cosas que se vean profesionales.</p>
-    </div>
-
-    <div class="info-card">
-      <p class="info-title">Proyectos “CV-ready”</p>
-      <p class="info-p">Ideas y ejemplos que te ayudan a armar un portafolio atractivo.</p>
-    </div>
-
-    <div class="info-card">
-      <p class="info-title">Carrera & enfoque</p>
-      <p class="info-p">Aprendizaje orientado a trabajo: qué hacer y en qué orden.</p>
-    </div>
-  </section>
-
-  <section class="latest">
-    <div class="latest-kicker">Último artículo</div>
-
-    {% if post %}
-      <h2>
-        <a class="post-link" href="{{ url_for('post_detail', slug=post['slug']) }}">
-          {{ post['title'] }}
-        </a>
-      </h2>
-
-      <div class="meta">
-        {{ post['date']|fecha }}
-        {% if post['tags'] %} · {{ post['tags'] }}{% endif %}
-      </div>
-
-      {% if post['excerpt'] %}
-        <p class="excerpt">{{ post['excerpt'] }}</p>
-      {% else %}
-        <p class="excerpt">Nuevo contenido disponible.</p>
-      {% endif %}
-
-      <div style="margin-top:.85rem;">
-        <a class="btn btn-primary" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer ahora →</a>
-      </div>
-    {% else %}
-      <h2>Todavía no hay artículos</h2>
-      <p class="excerpt">Muy pronto empezaré a publicar contenido nuevo.</p>
-    {% endif %}
   </section>
 </div>
 {% endblock %}
