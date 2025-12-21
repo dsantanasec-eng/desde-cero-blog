@@ -4,48 +4,243 @@
 
 {% block content %}
 <style>
-  .post-hero{
-    padding: 22px;
-    margin-bottom: 14px;
-    background: linear-gradient(135deg, rgba(29,78,216,.18), rgba(255,255,255,.7));
+  .post-wrap{
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2.2rem 1.2rem 4rem;
   }
-  .post-hero .k{ letter-spacing:.22em; text-transform:uppercase; font-size:.78rem; color:#1e3a8a; }
-  .post-hero h1{ margin:10px 0 8px; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height:1.12; }
-  .post-meta{ color: var(--muted); font-size:.92rem; }
 
-  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+  .card{
+    border-radius: 18px;
+    padding: 1.4rem 1.4rem;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(15,23,42,.10);
+    box-shadow: 0 12px 30px rgba(15,23,42,.08);
+  }
 
-  .content-card{ padding: 22px; }
-  .content-card p, .content-card li{ color: #1f2937; }
-  .content-card h2, .content-card h3{ margin-top: 20px; }
+  .kicker{
+    font-size:.78rem;
+    letter-spacing:.18em;
+    text-transform: uppercase;
+    color: rgba(15,23,42,.55);
+    font-weight: 800;
+    margin: 0 0 .5rem;
+  }
 
-  /* nice content spacing */
-  .content-card :first-child{ margin-top:0; }
+  h1{
+    margin: 0 0 .6rem;
+    color:#0f172a;
+    font-weight: 900;
+    line-height: 1.1;
+    font-size: 2rem;
+  }
+
+  .meta{
+    color: rgba(15,23,42,.62);
+    font-size: .92rem;
+    margin: 0 0 1rem;
+  }
+
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.45rem;
+    margin-top:.55rem;
+  }
+  .tag{
+    display:inline-flex;
+    padding:.32rem .62rem;
+    border-radius:999px;
+    background: rgba(37,99,235,.10);
+    border: 1px solid rgba(37,99,235,.18);
+    color:#0f172a;
+    font-size:.82rem;
+    font-weight:700;
+  }
+
+  .post-content{
+    margin-top: 1rem;
+    color: rgba(15,23,42,.82);
+    line-height: 1.75;
+    font-size: 1.02rem;
+  }
+  .post-content h2, .post-content h3{
+    color:#0f172a;
+    margin: 1.2rem 0 .5rem;
+  }
+  .post-content a{
+    color:#2563eb;
+    font-weight:800;
+    text-decoration:none;
+  }
+  .post-content a:hover{ text-decoration: underline; }
+
+  .actions{
+    display:flex;
+    gap:.7rem;
+    flex-wrap:wrap;
+    margin-top: 1.2rem;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.5rem;
+    padding: .78rem 1.15rem;
+    border-radius: 999px;
+    text-decoration:none;
+    font-weight: 800;
+    border: 1px solid rgba(15,23,42,.12);
+    background: rgba(255,255,255,.65);
+    color: #0f172a;
+    transition: .15s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 28px rgba(15,23,42,.10); }
+  .btn-primary{
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    border-color: rgba(37,99,235,.25);
+    color: white;
+  }
+
+  /* Comentarios */
+  .comments{
+    margin-top: 1.2rem;
+  }
+  .comments h2{
+    margin: 0 0 .8rem;
+    font-size: 1.25rem;
+    color:#0f172a;
+    font-weight: 900;
+  }
+
+  .form-row{
+    display:grid;
+    gap:.7rem;
+    margin-bottom: .9rem;
+  }
+  @media(min-width: 700px){
+    .form-row{ grid-template-columns: 1fr 2fr; align-items:start; }
+  }
+
+  input, textarea{
+    width:100%;
+    padding:.85rem .9rem;
+    border-radius: 12px;
+    border: 1px solid rgba(15,23,42,.14);
+    background: rgba(255,255,255,.75);
+    outline: none;
+    font-size: 1rem;
+    color:#0f172a;
+  }
+  textarea{ min-height: 120px; resize: vertical; }
+
+  .hint{
+    color: rgba(15,23,42,.60);
+    font-size: .9rem;
+    margin: .2rem 0 0;
+  }
+
+  .comment-list{
+    margin-top: 1rem;
+    display:grid;
+    gap:.8rem;
+  }
+  .comment{
+    border-radius: 14px;
+    padding: .95rem 1rem;
+    background: rgba(255,255,255,.70);
+    border: 1px solid rgba(15,23,42,.10);
+  }
+  .comment-head{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.45rem;
+    align-items:baseline;
+    margin-bottom:.35rem;
+  }
+  .comment-author{
+    font-weight: 900;
+    color:#0f172a;
+  }
+  .comment-date{
+    color: rgba(15,23,42,.55);
+    font-size: .88rem;
+  }
+  .comment-text{
+    margin: 0;
+    color: rgba(15,23,42,.78);
+    line-height: 1.55;
+  }
 </style>
 
-<section class="card post-hero">
-  <div class="k">Artículo</div>
-  <h1>{{ post['title'] }}</h1>
+<div class="post-wrap">
+  <article class="card">
+    <p class="kicker">ARTÍCULO</p>
+    <h1>{{ post['title'] }}</h1>
 
-  <div class="post-meta">
-    <strong>Publicado:</strong> {{ post['date']|fecha }}
-  </div>
+    <p class="meta">
+      <strong>Publicado:</strong> {{ post['date']|fecha }}
+      {% if post['tags'] %}
+        <span style="margin-left:.4rem;"><strong>Etiquetas:</strong></span>
+      {% endif %}
+    </p>
 
-  {% if post['tags'] %}
-    <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
-      {% for tag in post['tags'].split(',') %}
-        <span class="chip">{{ tag.strip() }}</span>
-      {% endfor %}
+    {% if post['tags'] %}
+      <div class="tags">
+        {% for t in post['tags'].split(',') %}
+          {% set clean = t.strip() %}
+          {% if clean %}
+            <span class="tag">{{ clean }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- 🔥 AQUÍ va el contenido real del post -->
+    <div class="post-content">
+      {{ post['content']|safe }}
     </div>
-  {% endif %}
 
-  <div class="actions">
-    <a class="btn btn-primary" href="{{ url_for('blog_list') }}">← Volver al blog</a>
-    <a class="btn" href="{{ url_for('home') }}">Ir al inicio</a>
-  </div>
-</section>
+    <div class="actions">
+      <a class="btn btn-primary" href="{{ url_for('blog_list') }}">← Volver al blog</a>
+      <a class="btn" href="{{ url_for('home') }}">Ir al inicio</a>
+    </div>
+  </article>
 
-<section class="card content-card">
-  {{ post['content']|safe }}
-</section>
+  <!-- ✅ Comentarios -->
+  <section class="comments card">
+    <h2>Comentarios</h2>
+
+    <form method="POST" action="{{ url_for('post_detail', slug=post['slug']) }}">
+      <div class="form-row">
+        <div>
+          <input type="text" name="author" placeholder="Tu nombre" required>
+          <p class="hint">Sin emails. Solo tu nombre.</p>
+        </div>
+        <div>
+          <textarea name="text" placeholder="Escribe tu comentario..." required></textarea>
+          <p class="hint">Sé respetuoso 🙌</p>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Publicar comentario</button>
+    </form>
+
+    {% if comments and comments|length > 0 %}
+      <div class="comment-list">
+        {% for c in comments %}
+          <div class="comment">
+            <div class="comment-head">
+              <span class="comment-author">{{ c['author'] }}</span>
+              <span class="comment-date">· {{ c['created_at']|fecha }}</span>
+            </div>
+            <p class="comment-text">{{ c['text'] }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="hint" style="margin-top: .9rem;">Todavía no hay comentarios. Sé el primero 👇</p>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}
