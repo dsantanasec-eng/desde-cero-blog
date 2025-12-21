@@ -2,17 +2,17 @@
 {% block title %}Blog | Desde Cero{% endblock %}
 
 {% block content %}
-<section class="card section" style="margin-bottom:16px;">
-  <div class="kicker">BLOG</div>
-  <h1 class="h1">Publicaciones recientes</h1>
-  <p class="lead">Artículos pensados para ayudarte a avanzar desde cero, sin abrumarte.</p>
-</section>
+<header class="blog-header">
+  <div class="kicker">Blog</div>
+  <h1 class="blog-title">Publicaciones recientes</h1>
+  <p class="blog-subtitle">Artículos pensados para ayudarte a avanzar desde cero, sin abrumarte.</p>
+</header>
 
 {% if posts %}
-  <div class="grid two">
+  <div class="blog-grid">
     {% for post in posts %}
-      <article class="post-card">
-        <h2 class="post-title">
+      <article class="card post-card">
+        <h2>
           <a href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
         </h2>
 
@@ -22,9 +22,7 @@
         </div>
 
         {% if post['excerpt'] %}
-          <p style="margin:0; color: var(--muted);">
-            {{ post['excerpt'] }}
-          </p>
+          <p class="excerpt">{{ post['excerpt'] }}</p>
         {% endif %}
 
         {% if post['tags'] %}
@@ -35,18 +33,16 @@
           </div>
         {% endif %}
 
-        <div style="margin-top:12px;">
-          <a class="btn btn-soft" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
-        </div>
+        <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
       </article>
     {% endfor %}
   </div>
 {% else %}
-  <section class="card section">
-    <p class="lead" style="max-width:none;">
-      Todavía no hay publicaciones. Muy pronto empezaré a compartir artículos sobre Python,
-      proyectos reales y carrera profesional.
+  <div class="card article-body">
+    <p class="excerpt">
+      Todavía no hay publicaciones en el blog. Muy pronto empezaré a compartir artículos
+      sobre Python, proyectos reales y carrera profesional.
     </p>
-  </section>
+  </div>
 {% endif %}
 {% endblock %}

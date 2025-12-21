@@ -1,35 +1,51 @@
 {% extends "base.html" %}
-{% block title %}Desde Cero{% endblock %}
+{% block title %}Desde Cero | Aprende, aplica y gana experiencia{% endblock %}
 
 {% block content %}
 <section class="hero">
   <div class="hero-grid">
     <div>
-      <div class="kicker">BIENVENIDO</div>
-      <h1 class="h1">Empieza desde cero y construye algo real</h1>
-      <p class="lead">
-        Guías claras sobre programación, proyectos y carrera tech.
-        Enfocado en resultados y pasos concretos.
+      <div class="kicker">Bienvenido</div>
+      <h1>Empieza desde cero y construye algo real en internet</h1>
+      <p>
+        Contenido práctico sobre programación, proyectos y carrera tech.
+        Enfocado en resultados y pasos concretos (sin humo).
       </p>
 
       <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ url_for('blog_list') }}">Explorar artículos</a>
-        <a class="btn btn-soft" href="{{ url_for('about') }}">Conoce mi historia</a>
+        <a class="btn btn-primary" href="{{ url_for('blog_list') }}">Explorar artículos →</a>
+        <a class="btn" href="{{ url_for('about') }}">Conoce mi historia</a>
       </div>
 
-      <p style="margin:12px 0 0; color: var(--muted); font-size:.9rem;">
-        Contenido pensado para gente ocupada: directo, práctico y sin humo.
+      <p class="small" style="margin-top:12px;">
+        ✅ Sitemap activo · SEO básico aplicado · Próximo: más contenido y optimización.
       </p>
     </div>
 
-    <div class="card section">
-      <div class="kicker">STATUS</div>
-      <p style="margin:10px 0 0; color: var(--muted);">
-        ✅ Sitemap activo<br>
-        ✅ SEO básico aplicado<br>
-        📈 Próximo: más contenido y optimización
+    <aside class="hero-side">
+      <div class="badge">Estado</div>
+      <h3 style="margin-top:10px;">Progreso del sitio</h3>
+      <p class="small" style="margin:0;">
+        Indexación en curso. Publicando contenido constantemente para acelerar crecimiento.
       </p>
-    </div>
+    </aside>
+  </div>
+</section>
+
+<section style="margin-top:18px;">
+  <div class="card article-body">
+    <div class="badge">Último artículo</div>
+
+    {% if post %}
+      <h2 style="margin:10px 0 6px;">
+        <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">{{ post['title'] }}</a>
+      </h2>
+      <div class="meta">{{ post['date']|fecha }}{% if post['tags'] %} · {{ post['tags'] }}{% endif %}</div>
+      {% if post['excerpt'] %}<p class="excerpt">{{ post['excerpt'] }}</p>{% endif %}
+      <a class="readmore" href="{{ url_for('post_detail', slug=post['slug']) }}">Leer más →</a>
+    {% else %}
+      <p class="excerpt">Todavía no hay artículos publicados. Muy pronto habrá contenido nuevo.</p>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

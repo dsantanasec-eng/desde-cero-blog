@@ -5,38 +5,37 @@
   <title>{% block title %}Desde Cero{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Google Font -->
+  <!-- Fuente -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS global -->
+  <!-- CSS GLOBAL (IMPORTANTE) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
-  <header class="navbar">
-    <div class="nav-inner">
-      <a href="{{ url_for('home') }}" class="brand">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-        <div class="brand-text">
-          <div class="brand-title">Desde Cero</div>
-          <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
-        </div>
-      </a>
 
-      <nav class="nav-links">
-        <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
-        <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
-        <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
-      </nav>
+<header class="navbar">
+  <a href="{{ url_for('home') }}" class="brand">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="brand-logo">
+    <div class="brand-text">
+      <div class="brand-title">Desde Cero</div>
+      <div class="brand-sub">Learn tech. Build skills. Get experience.</div>
     </div>
-  </header>
+  </a>
 
-  <main class="page">
-    {% block content %}{% endblock %}
-  </main>
+  <nav class="nav-links">
+    <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
+    <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
+    <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
+  </nav>
+</header>
 
-  <footer class="footer">
-    ©️ 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
-  </footer>
+<main class="page">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  ©️ 2025 Desde Cero · Hecho por Diomedes Santana · Construido con Flask
+</footer>
+
 </body>
 </html>
