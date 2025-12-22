@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto | Desde Cero{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="article-body" style="max-width:720px; margin:0 auto;">
+    <h1 style="margin-top:0;">Contacto</h1>
+
+    <p>
+      Si quieres ponerte en contacto conmigo por cualquier motivo
+      (feedback, colaboración, preguntas o sugerencias), puedes hacerlo
+      usando la información de abajo.
+    </p>
+
+    <h2>📩 Correo</h2>
+    <p>
+      <strong>Email:</strong>
+      <a href="mailto:contacto@desdecero.xyz">contacto@desdecero.xyz</a>
+    </p>
+
+    <h2>💬 Sobre mensajes</h2>
+    <p>
+      Intento responder todos los mensajes, pero puede tomar algo de tiempo.
+      Gracias por la paciencia.
+    </p>
+
+    <h2>🤝 Colaboraciones</h2>
+    <p>
+      Si tienes una propuesta seria relacionada con programación,
+      educación o tecnología, puedes escribirme directamente.
+    </p>
+
+    <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="{{ url_for('home') }}">Volver al inicio</a>
+      <a class="btn" href="{{ url_for('blog_list') }}">Ir al blog</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
