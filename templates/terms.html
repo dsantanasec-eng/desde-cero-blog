@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Términos y Condiciones | Desde Cero{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="article-body">
+    <h1 style="margin-top:0;">Términos y Condiciones</h1>
+    <p><strong>Última actualización:</strong> {{ now.strftime("%d/%m/%Y") }}</p>
+
+    <p>
+      Bienvenido/a a <strong>Desde Cero</strong> (“el Sitio”). Al acceder y usar este sitio web,
+      aceptas estos Términos y Condiciones. Si no estás de acuerdo, por favor no uses el sitio.
+    </p>
+
+    <h2>1. Propósito del sitio</h2>
+    <p>
+      “Desde Cero” comparte contenido educativo y experiencias personales relacionadas con programación,
+      proyectos y carrera tech. El contenido es informativo y no constituye asesoría profesional,
+      legal, financiera o médica.
+    </p>
+
+    <h2>2. Uso permitido</h2>
+    <ul>
+      <li>Usar el sitio con fines personales y educativos.</li>
+      <li>No usar el sitio para actividades ilegales, abusivas o que afecten el funcionamiento del servicio.</li>
+      <li>No intentar acceder a áreas restringidas, manipular el servidor o explotar vulnerabilidades.</li>
+    </ul>
+
+    <h2>3. Contenido y propiedad intelectual</h2>
+    <p>
+      A menos que se indique lo contrario, el contenido (textos, diseño y recursos) pertenece al autor del sitio.
+      Puedes compartir enlaces al contenido. No puedes copiar y republicar artículos completos sin permiso.
+    </p>
+
+    <h2>4. Enlaces externos</h2>
+    <p>
+      El sitio puede incluir enlaces a terceros (por ejemplo, plataformas educativas). No controlamos esos sitios
+      y no somos responsables por su contenido, políticas o prácticas.
+    </p>
+
+    <h2>5. Afiliados y monetización</h2>
+    <p>
+      En el futuro, el sitio puede usar enlaces de afiliado. Eso significa que podríamos ganar una comisión si
+      realizas una compra mediante esos enlaces, sin costo adicional para ti. Siempre intentaremos recomendar
+      recursos útiles y relevantes.
+    </p>
+
+    <h2>6. Comentarios y contenido del usuario</h2>
+    <p>
+      Si el sitio permite comentarios, el usuario es responsable de lo que publica. Nos reservamos el derecho de
+      eliminar comentarios ofensivos, spam o contenido inapropiado.
+    </p>
+
+    <h2>7. Disponibilidad y cambios</h2>
+    <p>
+      Podemos modificar, suspender o descontinuar el sitio (o partes del sitio) en cualquier momento.
+      También podemos actualizar estos términos; si continúas usando el sitio después de cambios,
+      se entenderá que aceptas la versión actualizada.
+    </p>
+
+    <h2>8. Limitación de responsabilidad</h2>
+    <p>
+      El uso del sitio es bajo tu propio riesgo. No garantizamos que el sitio esté libre de errores
+      o que siempre esté disponible.
+    </p>
+
+    <h2>9. Contacto</h2>
+    <p>
+      Si tienes preguntas sobre estos términos, puedes contactarnos desde la página de contacto (cuando esté disponible).
+    </p>
+
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="{{ url_for('home') }}">Volver al inicio</a>
+      <a class="btn" href="{{ url_for('blog_list') }}">Ir al blog</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
