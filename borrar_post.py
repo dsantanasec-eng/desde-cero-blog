@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "mi_blog.db"
 
-id_a_borrar = 5  # ← CAMBIA ESTE POR EL ID REAL DEL DUPLICADO
+id_a_borrar = 10  # ← CAMBIA ESTE POR EL ID REAL DEL DUPLICADO
 
 conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
