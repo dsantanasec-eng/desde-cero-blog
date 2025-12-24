@@ -180,6 +180,9 @@
         <a href="{{ url_for('home') }}" class="{% if active_page == 'home' %}nav-active{% endif %}">Inicio</a>
         <a href="{{ url_for('blog_list') }}" class="{% if active_page == 'blog' %}nav-active{% endif %}">Blog</a>
         <a href="{{ url_for('about') }}" class="{% if active_page == 'about' %}nav-active{% endif %}">Acerca de</a>
+        <a href="{{ url_for('privacy') }}">Privacidad</a>
+        <a href="{{ url_for('terms') }}">Términos</a>
+        <a href="{{ url_for('contact') }}">Contacto</a>
       </nav>
     </div>
   </header>

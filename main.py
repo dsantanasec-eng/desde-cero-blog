@@ -269,6 +269,19 @@ def main():
     else:
         app.run(debug=True, host="127.0.0.1", port=5000)
 
+from datetime import datetime
 
-if __name__ == "_main_":
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html", now=datetime.utcnow())
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html", now=datetime.utcnow())
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+if __name__ == "__main__":
     main()
