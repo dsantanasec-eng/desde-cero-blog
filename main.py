@@ -283,5 +283,11 @@ def terms():
 def contact():
     return render_template("contact.html")
 
+from flask import send_from_directory
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory("static", "robots.txt")
+
 if __name__ == "__main__":
     main()
