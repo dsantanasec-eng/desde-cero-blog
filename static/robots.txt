@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://desdezero.xyz/sitemap.xml
+Sitemap: https://desdecero.xyz/sitemap.xml

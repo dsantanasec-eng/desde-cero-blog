@@ -13,7 +13,6 @@ from flask import (
     abort,
     send_file,  # 👈 NUEVO
 )
-
 # ---------------- Configuración básica ----------------
 
 app = Flask(__name__)
@@ -22,6 +21,17 @@ app = Flask(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "mi_blog.db"
 
+# redirect issues
+
+from flask import request, redirect
+
+@app.before_request
+def redirect_www():
+    if request.host.startswith("www."):
+        return redirect(
+            request.url.replace("www.", "", 1),
+            code=301
+        )
 
 # --------------- Conexión y helpers de BD ---------------
 
