@@ -1,94 +1,73 @@
-import os
 import sqlite3
-from datetime import datetime
+from pathlib import Path
+from datetime import date
 
+# Ruta de tu base de datos (en la raíz del proyecto)
+DB_PATH = Path(__file__).resolve().parent / "mi_blog.db"
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "mi_blog.db")
+def add_post(title: str, slug: str, tags: str, excerpt: str, content: str):
+    if not DB_PATH.exists():
+        raise FileNotFoundError(f"No encuentro la base de datos en: {DB_PATH}")
 
-
-def make_unique_slug(cur, base_slug: str) -> str:
-    """
-    If base_slug exists, returns base_slug-2, base_slug-3, etc.
-    """
-    slug = base_slug.strip().lower()
-    n = 1
-    while True:
-        cur.execute("SELECT 1 FROM posts WHERE slug = ? LIMIT 1", (slug,))
-        exists = cur.fetchone()
-        if not exists:
-            return slug
-        n += 1
-        slug = f"{base_slug}-{n}"
-
-
-def main():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    # ====== EDITA SOLO ESTO (si quieres cambiar el post) ======
-    title = "How to Train Your Programming Logic (Even If You’re Just Starting)"
-    base_slug = "how-to-train-programming-logic-beginners"  # este es el que te está chocando
-    date_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    tags = "programming logic, beginners, problem solving, coding mindset, usa"
-    excerpt = (
-        "Programming is not about memorizing syntax. It’s about learning how to think. "
-        "Here are practical ways to train your programming logic from day one."
-    )
+    # Verifica que la tabla exista
+    cur.execute("""
+        SELECT name FROM sqlite_master
+        WHERE type='table' AND name='posts'
+    """)
+    if cur.fetchone() is None:
+        conn.close()
+        raise RuntimeError("No existe la tabla 'posts'. Asegúrate de haber corrido init_db.")
 
-    content = """
-<p>One of the biggest mistakes beginners make is thinking that programming is about learning a language.</p>
-<p>It’s not.</p>
+    today = date.today().isoformat()  # YYYY-MM-DD
 
-<p>Programming is about learning how to <strong>think</strong>. Languages are just tools.</p>
-
-<h2>1) Solve tiny problems daily (10–20 minutes)</h2>
-<p>Pick one small problem per day: reverse a string, count vowels, find the max number, remove duplicates, etc.
-Small problems build consistency and confidence.</p>
-
-<h2>2) Say your logic out loud before coding</h2>
-<p>Before touching the keyboard, explain the steps like you’re teaching someone:
-“What do I know? What do I need? What should happen next?”</p>
-
-<h2>3) Write the steps as plain English first</h2>
-<p>Example: “Read the numbers → keep the biggest → print it.” Then translate to code.</p>
-
-<h2>4) Get comfortable with loops + conditions</h2>
-<p>If you understand <strong>if</strong> and <strong>for/while</strong>, you can build almost anything.
-Most beginner problems are just loops + decisions.</p>
-
-<h2>5) Debug like a detective</h2>
-<ul>
-  <li>Print variables.</li>
-  <li>Check one step at a time.</li>
-  <li>Ask: “What did I expect vs what happened?”</li>
-</ul>
-
-<h2>6) Repeat patterns (not tutorials)</h2>
-<p>Tutorials feel productive, but repetition is what makes you improve.
-Solve the same type of problem in 3 different ways.</p>
-
-<h2>Final thought</h2>
-<p>Your logic improves every time you struggle and keep going. That’s the game.</p>
-"""
-    # ===========================================================
-
-    # Crear slug único
-    slug = make_unique_slug(cur, base_slug)
-
-    cur.execute(
-        """
+    cur.execute("""
         INSERT INTO posts (title, slug, date, tags, excerpt, content)
         VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (title, slug, date_str, tags, excerpt, content.strip()),
-    )
+    """, (title, slug, today, tags, excerpt, content))
 
     conn.commit()
     conn.close()
+    print("✅ Post agregado a la base de datos:", title)
 
-    print("✅ Post added successfully.")
-    print(f"✅ Slug usado: {slug}")
+if __name__ == "_main_":
+    title = "Por qué decidí aprender C++ y cómo ha sido el proceso hasta ahora"
+    slug = "por-que-aprender-cpp-y-como-ha-sido-mi-proceso"
+    tags = "c++,programacion,aprendizaje,desarrollo"
+    excerpt = "Quería entender qué pasa por debajo del código. C++ me obligó a pensar distinto: memoria, rendimiento y fundamentos. Esto es lo que he aprendido hasta ahora."
 
+    content = """Durante mucho tiempo pensé que aprender a programar era solo elegir un lenguaje “popular” y ya. Python, JavaScript, algo rápido, algo que diera resultados visibles. Y aunque eso no está mal, en un punto me di cuenta de que quería entender qué estaba pasando realmente por debajo. No solo escribir código que funcione, sino saber por qué funciona.
 
-if __name__ == "__main__":
-    main()
+Ahí fue cuando apareció C++.
+
+No fue una decisión impulsiva ni porque alguien me dijo que era “el mejor lenguaje”. De hecho, muchas personas me advirtieron que C++ es difícil, que tiene una curva de aprendizaje fuerte, que puede frustrar. Y precisamente por eso me llamó la atención.
+
+El primer choque con C++
+Aprender C++ no se siente cómodo al inicio. No es un lenguaje que te lleve de la mano. Desde el primer momento te obliga a pensar: cómo se guarda la información, cómo se usa la memoria, qué está pasando realmente cuando ejecutas una instrucción.
+
+Al principio cometí errores simples. Errores que en otros lenguajes pasan desapercibidos, aquí no. Pero lejos de desmotivarme, eso me hizo entender algo importante: C++ te enseña a ser más cuidadoso. Cada línea importa.
+
+Lo que C++ me hizo entender
+Más allá del lenguaje en sí, C++ me ayudó a comprender conceptos que antes solo veía por encima:
+- Cómo funciona la memoria
+- Qué diferencia hay entre una variable, una referencia y un puntero
+- Por qué el rendimiento importa
+- Cómo piensa la computadora, no solo el programador
+
+Eso cambia totalmente la forma en que ves la programación. Incluso cuando vuelves a otros lenguajes, piensas diferente.
+
+No lo aprendí “rápido”, y eso está bien
+No intenté correr. Aprender C++ no fue ver mil tutoriales en un día. Fue lento: leer, escribir código, equivocarme, volver a leer, volver a intentar. Y creo que eso es lo correcto.
+
+Lo recomiendo?
+Sí, pero con honestidad. No es el primer lenguaje ideal si lo que buscas es resultados inmediatos o aplicaciones rápidas. Pero si quieres formarte como desarrollador, entender los fundamentos y fortalecer tu lógica, C++ aporta muchísimo.
+
+Mi conclusión personal
+Aprender C++ fue una decisión consciente. No fácil, no rápida, pero muy valiosa. Me obligó a pensar más, a respetar los detalles y a entender la programación desde adentro.
+
+Todavía sigo aprendiendo. Todavía me equivoco. Pero ahora sé que cada línea de código que escribo tiene un propósito más claro. Y eso, para mí, ya valió la pena.
+"""
+
+    add_post(title, slug, tags, excerpt, content)
