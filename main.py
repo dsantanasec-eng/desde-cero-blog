@@ -1,8 +1,8 @@
 import argparse
-import os
 import sqlite3
 from pathlib import Path
-from datetime import datetime, date
+from datetime import datetime
+import os
 
 from flask import (
     Flask,
@@ -12,6 +12,7 @@ from flask import (
     url_for,
     abort,
     send_file,
+    flash,
     send_from_directory,
 )
 
@@ -19,43 +20,30 @@ from flask import (
 
 app = Flask(__name__)
 
+# Secret para flash/messages (Render usa env var, local usa fallback)
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+
+# Admin ON/OFF (cuando termines de publicar posts, ponlo en False y haces push)
+ADMIN_ENABLED = True
+ADMIN_KEY = os.environ.get("ADMIN_KEY", "desde-cero-admin")
+
+# Ruta al archivo de base de datos (mi_blog.db en la carpeta del proyecto)
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "mi_blog.db"
 
-# Flag para inicializar solo una vez por proceso
-_DB_READY = False
+# ---------------- Redirect www -> non-www ----------------
 
-
-# ----------------- Helpers -----------------
-
-def ensure_db(seed=True):
-    """
-    Asegura que la DB exista y tenga sus tablas.
-    En Render (producción), esto evita el 500 porque la DB no existe al inicio.
-    """
-    global _DB_READY
-    if _DB_READY:
-        return
-
-    # Si no existe la DB, la creamos
-    if not DB_PATH.exists():
-        init_db(seed=seed)
-    else:
-        # Aunque exista, garantizamos tablas (idempotente)
-        init_db(seed=False)
-
-    _DB_READY = True
-
+@app.before_request
+def redirect_www():
+    if request.host.startswith("www."):
+        return redirect(request.url.replace("www.", "", 1), code=301)
 
 # --------------- Conexión y helpers de BD ---------------
 
 def get_conn():
     """Devuelve una conexión a la base de datos SQLite."""
-    ensure_db(seed=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    # Recomendado: activar foreign keys en SQLite
-    conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
 
@@ -64,9 +52,7 @@ def init_db(seed=False):
     Crea las tablas si no existen.
     Si seed=True y no hay posts, inserta un post de ejemplo.
     """
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON;")
+    conn = get_conn()
     cur = conn.cursor()
 
     # Tabla de posts
@@ -88,10 +74,10 @@ def init_db(seed=False):
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS comments (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id    INTEGER NOT NULL,
-            author     TEXT NOT NULL,
-            text       TEXT NOT NULL,
+            id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            post_id   INTEGER NOT NULL,
+            author    TEXT NOT NULL,
+            text      TEXT NOT NULL,
             created_at TEXT NOT NULL,
             FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
         )
@@ -100,34 +86,20 @@ def init_db(seed=False):
 
     conn.commit()
 
-    # Semilla: crear 1 post de ejemplo si no hay ninguno
     if seed:
-        cur.execute("SELECT COUNT(*) as c FROM posts")
-        count = cur.fetchone()["c"]
+        cur.execute("SELECT COUNT(*) FROM posts")
+        count = cur.fetchone()[0]
 
         if count == 0:
             content_html = """
 <p>He probado muchos cursos de Python y estos son los 5 que de verdad recomiendo si estás empezando desde cero:</p>
-
 <ol>
-  <li><strong>Google IT Automation with Python (Coursera)</strong><br>
-      Ideal si quieres usar Python para automatizar tareas de soporte técnico y sistemas.
-  </li>
-  <li><strong>Python for Everybody (Coursera)</strong><br>
-      Muy bueno para entender bien las bases de Python sin ir demasiado rápido.
-  </li>
-  <li><strong>Automate the Boring Stuff with Python</strong><br>
-      Perfecto si quieres ver ejemplos prácticos para automatizar cosas reales en tu PC.
-  </li>
-  <li><strong>CS50P – Introduction to Programming with Python (Harvard / edX)</strong><br>
-      Más completo y un poco más exigente, pero te da una base fuerte de programación.
-  </li>
-  <li><strong>FreeCodeCamp | Python / Backend</strong><br>
-      Gratis y con muchos ejercicios para practicar y reforzar.
-  </li>
+  <li><strong>Google IT Automation with Python (Coursera)</strong></li>
+  <li><strong>Python for Everybody (Coursera)</strong></li>
+  <li><strong>Automate the Boring Stuff with Python</strong></li>
+  <li><strong>CS50P – Introduction to Programming with Python (Harvard / edX)</strong></li>
+  <li><strong>FreeCodeCamp | Python / Backend</strong></li>
 </ol>
-
-<p>Mi consejo: elige <strong>uno</strong> para empezar, termínalo, y mientras tanto ve construyendo mini proyectos sencillos. Después puedes pasar al siguiente.</p>
 """
             cur.execute(
                 """
@@ -146,6 +118,14 @@ def init_db(seed=False):
             conn.commit()
 
     conn.close()
+
+
+# ✅ IMPORTANTE: en Render la DB puede venir vacía.
+# Esto asegura que existan las tablas siempre (no mete posts, solo crea tablas).
+try:
+    init_db(seed=False)
+except Exception as e:
+    print("⚠️ No pude inicializar la DB automáticamente:", e)
 
 
 def get_all_posts():
@@ -186,50 +166,18 @@ def add_comment(post_id: int, author: str, text: str):
         INSERT INTO comments (post_id, author, text, created_at)
         VALUES (?, ?, ?, ?)
         """,
-        (
-            post_id,
-            author,
-            text,
-            datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-        ),
+        (post_id, author, text, datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")),
     )
     conn.commit()
     conn.close()
 
 
-# ---------------- Redirect www -> sin www ----------------
-
-@app.before_request
-def redirect_www():
-    if request.host.startswith("www."):
-        return redirect(request.url.replace("www.", "", 1), code=301)
-
-
-# ---------------- Filtros y contexto global ----------------
-
-@app.template_filter("fecha")
-def formato_fecha(value):
-    """
-    Convierte 'YYYY-MM-DD HH:MM:SS' a 'DD/MM/YYYY HH:MM'
-    """
-    try:
-        if isinstance(value, str):
-            dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-        else:
-            dt = value
-        return dt.strftime("%d/%m/%Y %H:%M")
-    except Exception:
-        return value
-
+# ---------------- Contexto global ----------------
 
 @app.context_processor
 def inject_globals():
     now = datetime.utcnow()
-    return {
-        "now": now,
-        "current_year": now.year,
-        "site_name": "Desde Cero",
-    }
+    return {"now": now, "current_year": now.year, "site_name": "Desde Cero"}
 
 
 # ---------------------- Rutas ---------------------------
@@ -238,8 +186,8 @@ def inject_globals():
 def home():
     posts = get_all_posts()
     last_post = posts[0] if posts else None
-    fecha_hoy = datetime.now().strftime("%d/%m/%Y")
-    return render_template("index.html", post=last_post, fecha=fecha_hoy)
+    fecha = datetime.now().strftime("%d/%m/%Y")
+    return render_template("index.html", post=last_post, fecha=fecha)
 
 
 @app.route("/about")
@@ -262,12 +210,76 @@ def post_detail(slug):
     if request.method == "POST":
         author = request.form.get("author", "").strip()
         text = request.form.get("text", "").strip()
+
         if author and text:
             add_comment(post["id"], author, text)
             return redirect(url_for("post_detail", slug=slug))
 
     comments = get_comments(post["id"])
     return render_template("post_detail.html", post=post, comments=comments)
+
+
+# ✅ ADMIN para crear posts desde la web:
+# URL: /admin?key=TUCLAVE
+@app.route("/admin", methods=["GET", "POST"])
+def admin_new():
+    if not ADMIN_ENABLED:
+        abort(404)
+
+    key = request.args.get("key", "")
+    if key != ADMIN_KEY:
+        abort(403)
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        slug = request.form.get("slug", "").strip()
+        tags = request.form.get("tags", "").strip()
+        excerpt = request.form.get("excerpt", "").strip()
+        content = request.form.get("content", "").strip()
+
+        if not title or not slug or not content:
+            flash("Faltan campos obligatorios: título, slug y contenido.")
+            return redirect(url_for("admin_new", key=ADMIN_KEY))
+
+        created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+        conn = get_conn()
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                """
+                INSERT INTO posts (title, slug, date, tags, excerpt, content)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (title, slug, created_at, tags, excerpt, content),
+            )
+            conn.commit()
+        except sqlite3.IntegrityError:
+            conn.close()
+            flash("Ese slug ya existe. Cámbialo por uno diferente.")
+            return redirect(url_for("admin_new", key=ADMIN_KEY))
+
+        conn.close()
+        flash("✅ Post publicado.")
+        return redirect(url_for("blog_list"))
+
+    return render_template("admin_new.html")
+
+
+# ----------- sitemap.xml ----------------
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_file(
+        os.path.join(BASE_DIR, "sitemap.xml"),
+        mimetype="application/xml",
+        as_attachment=False
+    )
+
+
+# ----------- robots.txt ----------------
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory("static", "robots.txt")
 
 
 @app.route("/privacy")
@@ -285,46 +297,20 @@ def contact():
     return render_template("contact.html")
 
 
-# ----------- sitemap.xml y robots.txt ----------------
-
-@app.route("/sitemap.xml")
-def sitemap():
-    return send_file(
-        os.path.join(BASE_DIR, "sitemap.xml"),
-        mimetype="application/xml",
-        as_attachment=False,
-    )
-
-
-@app.route("/robots.txt")
-def robots():
-    return send_from_directory("static", "robots.txt")
-
-
 # ----------------- Arranque / CLI -----------------------
 
 def main():
     parser = argparse.ArgumentParser(description="Blog 'Desde Cero'")
-    parser.add_argument(
-        "--initdb",
-        action="store_true",
-        help="Crear/sembrar la base de datos",
-    )
+    parser.add_argument("--initdb", action="store_true", help="Crear/sembrar la base de datos")
     args = parser.parse_args()
 
     if args.initdb:
         print("Inicializando base de datos en:", DB_PATH)
         init_db(seed=True)
         print("✔ Base de datos lista.")
-        return
-
-    # Para correr local (Render usa gunicorn normalmente)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    else:
+        app.run(debug=True, host="127.0.0.1", port=5000)
 
 
-# IMPORTANTE:
-# Esto se ejecuta cuando corres python main.py local,
-# pero en Render (gunicorn) igualmente ensure_db() se llama desde get_conn()
 if __name__ == "__main__":
     main()
