@@ -3,6 +3,7 @@ import os
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+
 from flask import (
     Flask,
     render_template,
@@ -25,21 +26,15 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# ✅ Render: SQLite suele fallar si intentas escribir en el root del repo.
-# Guardamos la DB en un directorio escribible.
-# - Local: DATA_DIR puede ser el proyecto si quieres
-# - Render: por defecto /tmp (writable)
-DATA_DIR = Path(os.environ.get("DATA_DIR", "/tmp"))
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-
-DB_PATH = DATA_DIR / "mi_blog.db"
+# ✅ VOLVEMOS A LA DB ORIGINAL (la que tiene tus 8 posts)
+# Debe existir en la raíz del proyecto: ./mi_blog.db
+DB_PATH = BASE_DIR / "mi_blog.db"
 
 
 # -------------------- Redirect www --------------------
 
 @app.before_request
 def redirect_www():
-    # si llega por www, lo mandamos a sin www
     if request.host.startswith("www."):
         return redirect(request.url.replace("www.", "", 1), code=301)
 
@@ -61,7 +56,6 @@ def init_db(seed=False):
     conn = get_conn()
     cur = conn.cursor()
 
-    # Tabla de posts
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS posts (
@@ -76,7 +70,6 @@ def init_db(seed=False):
         """
     )
 
-    # Tabla de comentarios
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS comments (
@@ -202,7 +195,7 @@ def add_post(title: str, slug: str, tags: str, excerpt: str, content: str):
     conn.close()
 
 
-# ✅ Render: inicializa DB automáticamente al arrancar
+# ✅ Inicializa tablas sin borrar nada (no afecta tus posts)
 try:
     init_db(seed=False)
 except Exception as e:
@@ -304,11 +297,12 @@ def sitemap():
 
 
 # ---------------- Admin (crear posts desde la web) ----------------
-# ✅ Para no “exponer” admin, lo puedes apagar con ADMIN_ENABLED=0
+# ✅ Para apagar admin: ADMIN_ENABLED=0 en Render
 ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "1") == "1"
 
 # ✅ Token simple (ponlo en Render como env var ADMIN_TOKEN)
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
+
 
 def admin_is_logged_in():
     return session.get("is_admin") is True
@@ -336,6 +330,7 @@ def admin_login():
 def admin_logout():
     if not ADMIN_ENABLED:
         abort(404)
+
     session.pop("is_admin", None)
     flash("✅ Sesión cerrada.", "success")
     return redirect(url_for("home"))
@@ -388,7 +383,6 @@ def main():
         init_db(seed=True)
         print("✔ Base de datos lista.")
     else:
-        # Local
         app.run(debug=True, host="127.0.0.1", port=5000)
 
 
