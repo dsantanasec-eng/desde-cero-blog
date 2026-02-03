@@ -1,24 +1,36 @@
 {% extends "base.html" %}
-{% block title %}Entrar · Admin · {{ SITE_NAME }}{% endblock %}
+{% block title %}Entrar · Admin · {{ site_name }}{% endblock %}
 
 {% block content %}
-  <section class="hero" style="padding-bottom:0">
-    <h1>Administración</h1>
-    <p class="muted">Ingresa para publicar sin tocar código.</p>
-  </section>
+<section class="hero" style="padding-bottom:0">
+  <h1>Administración</h1>
+  <p class="muted">Ingresa para publicar sin tocar código.</p>
+</section>
 
-  {% with msgs = get_flashed_messages() %}
-    {% if msgs %}
-      <div class="card" style="border-color:#ffd5d5;background:#fff7f7">
-        {% for m in msgs %}<div>{{ m }}</div>{% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+{% with msgs = get_flashed_messages(with_categories=true) %}
+  {% if msgs %}
+    <div class="card" style="margin-top:16px">
+      {% for category, message in msgs %}
+        <div style="color: {% if category == 'error' %}#c0392b{% else %}#2c7a7b{% endif %};">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
-  <form method="post" class="card" style="margin-top:16px;max-width:520px">
-    <label class="muted">Contraseña</label>
-    <input name="password" type="password" required
-           style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px;margin:6px 0 12px">
-    <button class="btn">Entrar</button>
-  </form>
+<form method="post" class="card" style="margin-top:16px;max-width:520px">
+  <label class="muted">Token de administrador</label>
+
+  <!-- 🔥 CLAVE: name="token" -->
+  <input
+    name="token"
+    type="password"
+    required
+    placeholder="ADMIN_TOKEN"
+    style="width:100%;padding:10px;border:1px solid #e6e7eb;border-radius:8px;margin:6px 0 12px"
+  >
+
+  <button class="btn">Entrar</button>
+</form>
 {% endblock %}
