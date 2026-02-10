@@ -3,6 +3,7 @@ import os
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+from urllib.parse import urlparse
 
 from flask import (
     Flask,
@@ -26,9 +27,21 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# ✅ VOLVEMOS A LA DB ORIGINAL (la que tiene tus 8 posts)
-# Debe existir en la raíz del proyecto: ./mi_blog.db
+# ✅ SQLite local (solo para tu PC). En Render esto NO es persistente.
 DB_PATH = BASE_DIR / "mi_blog.db"
+
+# ✅ Si existe DATABASE_URL (Postgres en Render/Neon), usamos Postgres.
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+USE_POSTGRES = bool(DATABASE_URL)
+
+# Intentar importar psycopg2 solo si se va a usar Postgres
+if USE_POSTGRES:
+    try:
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+    except Exception as e:
+        print("⚠️ DATABASE_URL está seteada pero falta psycopg2. Error:", e)
+        USE_POSTGRES = False
 
 
 # -------------------- Redirect www --------------------
@@ -41,11 +54,43 @@ def redirect_www():
 
 # --------------- Conexión y helpers de BD ---------------
 
+def _pg_connect():
+    """
+    Conecta a Postgres usando DATABASE_URL.
+    Nota: Si tu URL ya trae sslmode, no lo pisamos.
+    """
+    # Algunos providers usan postgres://, psycopg2 acepta, pero por si acaso:
+    url = DATABASE_URL.replace("postgresql://", "postgres://", 1)
+
+    # Si no trae sslmode, intentamos sslmode=require (común en Neon)
+    if "sslmode=" not in url:
+        # psycopg2 acepta sslmode como parametro aparte
+        return psycopg2.connect(url, sslmode="require", cursor_factory=RealDictCursor)
+
+    return psycopg2.connect(url, cursor_factory=RealDictCursor)
+
+
 def get_conn():
-    """Devuelve una conexión a la base de datos SQLite."""
+    """
+    Devuelve una conexión:
+    - Postgres si DATABASE_URL existe
+    - SQLite si no.
+    """
+    if USE_POSTGRES:
+        return _pg_connect()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _placeholders(sql: str) -> str:
+    """
+    Convierte placeholders para Postgres.
+    En tu código usas ? (SQLite). Postgres usa %s.
+    """
+    if USE_POSTGRES:
+        return sql.replace("?", "%s")
+    return sql
 
 
 def init_db(seed=False):
@@ -56,38 +101,66 @@ def init_db(seed=False):
     conn = get_conn()
     cur = conn.cursor()
 
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS posts (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            title   TEXT NOT NULL,
-            slug    TEXT NOT NULL UNIQUE,
-            date    TEXT NOT NULL,      -- 'YYYY-MM-DD HH:MM:SS'
-            tags    TEXT,
-            excerpt TEXT,
-            content TEXT NOT NULL
+    if USE_POSTGRES:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS posts (
+                id      SERIAL PRIMARY KEY,
+                title   TEXT NOT NULL,
+                slug    TEXT NOT NULL UNIQUE,
+                date    TIMESTAMP NOT NULL,
+                tags    TEXT,
+                excerpt TEXT,
+                content TEXT NOT NULL
+            )
+            """
         )
-        """
-    )
 
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS comments (
-            id        INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id   INTEGER NOT NULL,
-            author    TEXT NOT NULL,
-            text      TEXT NOT NULL,
-            created_at TEXT NOT NULL,
-            FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS comments (
+                id         SERIAL PRIMARY KEY,
+                post_id    INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+                author     TEXT NOT NULL,
+                text       TEXT NOT NULL,
+                created_at TIMESTAMP NOT NULL
+            )
+            """
         )
-        """
-    )
+    else:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS posts (
+                id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                title   TEXT NOT NULL,
+                slug    TEXT NOT NULL UNIQUE,
+                date    TEXT NOT NULL,      -- 'YYYY-MM-DD HH:MM:SS'
+                tags    TEXT,
+                excerpt TEXT,
+                content TEXT NOT NULL
+            )
+            """
+        )
+
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS comments (
+                id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                post_id   INTEGER NOT NULL,
+                author    TEXT NOT NULL,
+                text      TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+            )
+            """
+        )
 
     conn.commit()
 
     if seed:
-        cur.execute("SELECT COUNT(*) FROM posts")
-        count = cur.fetchone()[0]
+        cur.execute("SELECT COUNT() AS c FROM posts" if USE_POSTGRES else "SELECT COUNT() FROM posts")
+        row = cur.fetchone()
+        count = row["c"] if USE_POSTGRES else row[0]
 
         if count == 0:
             content_html = """
@@ -112,20 +185,37 @@ def init_db(seed=False):
 <p>Mi consejo: elige <strong>uno</strong> para empezar, termínalo, y mientras tanto ve construyendo mini proyectos sencillos. Después puedes pasar al siguiente.</p>
 """.strip()
 
-            cur.execute(
-                """
-                INSERT INTO posts (title, slug, date, tags, excerpt, content)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    "Top 5 cursos gratuitos para aprender Python",
-                    "cursos-gratis-python-desde-cero",
-                    "2025-11-10 00:00:00",
-                    "python, educación",
-                    "Mi selección de cursos online gratuitos que realmente valen la pena si estás empezando desde cero.",
-                    content_html,
-                ),
-            )
+            if USE_POSTGRES:
+                cur.execute(
+                    """
+                    INSERT INTO posts (title, slug, date, tags, excerpt, content)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (
+                        "Top 5 cursos gratuitos para aprender Python",
+                        "cursos-gratis-python-desde-cero",
+                        datetime(2025, 11, 10, 0, 0, 0),
+                        "python, educación",
+                        "Mi selección de cursos online gratuitos que realmente valen la pena si estás empezando desde cero.",
+                        content_html,
+                    ),
+                )
+            else:
+                cur.execute(
+                    """
+                    INSERT INTO posts (title, slug, date, tags, excerpt, content)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        "Top 5 cursos gratuitos para aprender Python",
+                        "cursos-gratis-python-desde-cero",
+                        "2025-11-10 00:00:00",
+                        "python, educación",
+                        "Mi selección de cursos online gratuitos que realmente valen la pena si estás empezando desde cero.",
+                        content_html,
+                    ),
+                )
+
             conn.commit()
 
     conn.close()
@@ -143,7 +233,7 @@ def get_all_posts():
 def get_post_by_slug(slug: str):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM posts WHERE slug = ?", (slug,))
+    cur.execute(_placeholders("SELECT * FROM posts WHERE slug = ?"), (slug,))
     row = cur.fetchone()
     conn.close()
     return row
@@ -153,7 +243,7 @@ def get_comments(post_id: int):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(
-        "SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC",
+        _placeholders("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC"),
         (post_id,),
     )
     rows = cur.fetchall()
@@ -164,33 +254,55 @@ def get_comments(post_id: int):
 def add_comment(post_id: int, author: str, text: str):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO comments (post_id, author, text, created_at)
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            post_id,
-            author,
-            text,
-            datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-        ),
-    )
+
+    if USE_POSTGRES:
+        cur.execute(
+            """
+            INSERT INTO comments (post_id, author, text, created_at)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (post_id, author, text, datetime.utcnow()),
+        )
+    else:
+        cur.execute(
+            """
+            INSERT INTO comments (post_id, author, text, created_at)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                post_id,
+                author,
+                text,
+                datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+            ),
+        )
+
     conn.commit()
     conn.close()
 
 
 def add_post(title: str, slug: str, tags: str, excerpt: str, content: str):
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO posts (title, slug, date, tags, excerpt, content)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (title, slug, now, tags, excerpt, content),
-    )
+
+    if USE_POSTGRES:
+        cur.execute(
+            """
+            INSERT INTO posts (title, slug, date, tags, excerpt, content)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (title, slug, datetime.utcnow(), tags, excerpt, content),
+        )
+    else:
+        now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        cur.execute(
+            """
+            INSERT INTO posts (title, slug, date, tags, excerpt, content)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (title, slug, now, tags, excerpt, content),
+        )
+
     conn.commit()
     conn.close()
 
@@ -207,11 +319,22 @@ except Exception as e:
 @app.template_filter("fecha")
 def formato_fecha(value):
     try:
-        if isinstance(value, str):
-            dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        if USE_POSTGRES:
+            # Postgres puede devolver datetime directo
+            if isinstance(value, datetime):
+                dt = value
+            elif isinstance(value, str):
+                # si viniera string raro
+                dt = datetime.fromisoformat(value.replace("Z", ""))
+            else:
+                dt = value
+            return dt.strftime("%d/%m/%Y %H:%M")
         else:
-            dt = value
-        return dt.strftime("%d/%m/%Y %H:%M")
+            if isinstance(value, str):
+                dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            else:
+                dt = value
+            return dt.strftime("%d/%m/%Y %H:%M")
     except Exception:
         return value
 
@@ -219,10 +342,12 @@ def formato_fecha(value):
 @app.context_processor
 def inject_globals():
     now = datetime.utcnow()
+    # ✅ Dejo ambos por compatibilidad con templates:
     return {
         "now": now,
         "current_year": now.year,
         "site_name": "Desde Cero",
+        "SITE_NAME": "Desde Cero",
     }
 
 
@@ -314,7 +439,8 @@ def admin_login():
         abort(404)
 
     if request.method == "POST":
-        token = request.form.get("token", "").strip()
+        # ✅ Acepta "token" o "password" (por si tu template usa password)
+        token = (request.form.get("token") or request.form.get("password") or "").strip()
 
         if ADMIN_TOKEN and token == ADMIN_TOKEN:
             session["is_admin"] = True
@@ -359,10 +485,13 @@ def admin_new():
             add_post(title, slug, tags, excerpt, content)
             flash("✅ Post publicado.", "success")
             return redirect(url_for("post_detail", slug=slug))
-        except sqlite3.IntegrityError:
-            flash("❌ Ese slug ya existe. Usa otro.", "error")
         except Exception as e:
-            flash(f"❌ Error guardando post: {e}", "error")
+            # Para Postgres y SQLite:
+            msg = str(e)
+            if "unique" in msg.lower() and "slug" in msg.lower():
+                flash("❌ Ese slug ya existe. Usa otro.", "error")
+            else:
+                flash(f"❌ Error guardando post: {e}", "error")
 
     return render_template("admin_new.html")
 
