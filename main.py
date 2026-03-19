@@ -22,6 +22,10 @@ from flask import (
 
 app = Flask(__name__)
 
+@app.route('/ads.txt')
+def ads():
+    return "google.com, pub-4227427045418783, DIRECT, f08c47fec0942fa0"
+
 # ✅ Necesario para session/flash (ponlo en Render como env var SECRET_KEY)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 
