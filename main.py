@@ -517,7 +517,16 @@ def main():
         print("✔ Base de datos lista.")
     else:
         app.run(debug=True, host="127.0.0.1", port=5000)
+@app.route("/delete-test-post")
 
+def delete_test_post():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM posts WHERE slug = %s", ("test",))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return "Post test eliminado"
 
 if __name__ == "__main__":
     main()
